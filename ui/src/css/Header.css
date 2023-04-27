@@ -1,0 +1,55 @@
+.main-header {
+    width: 100%;
+    height: 10vh;
+    background-color: #1c266e;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.header {
+    width: 75vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.book-icon {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 5px;
+}
+
+.searchBar {
+    width: 30vw;
+    display: flex;
+    align-items: center;
+    margin-left: 5rem;
+}
+
+.search {
+    width: 100%;
+    height: 4vh;
+    border-radius: 0.3rem;
+    padding-left: 3rem;
+    border: none;
+    outline: none;
+}
+
+.magicon {
+
+    margin-left: 1rem;
+    margin-top: -0.7rem;
+    position: absolute;
+}
+
+.Profile-icon,
+.Course-icon,
+.Logout-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+}

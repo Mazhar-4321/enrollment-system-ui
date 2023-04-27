@@ -95,17 +95,13 @@ export const LandingPage = () => {
 
   const handleOpenForProceed = async () => {
     setOpenForProceed(true);
-    console.log("------------->", signUpObject.email);
     const data = {
       email: signUpObject.email,
     };
     const response = await validateEmail(data);
-    console.log(response, console.log(signUpObject.email));
   };
 
   const handleOtp = async () => {
-    console.log("----------->", signUpObject.lastName);
-    console.log("from me========>", OTP);
     const data2 = {
       firstName: signUpObject.firstName,
       lastName: signUpObject.lastName,
@@ -115,7 +111,6 @@ export const LandingPage = () => {
       role: userType,
     };
     const response = await registerUser(data2);
-    console.log(response);
   };
 
   const [signInObject, setSignInObject] = useState({
@@ -163,7 +158,6 @@ export const LandingPage = () => {
       email: event.target.value,
     }));
 
-    console.log(signInObject.email);
 
     var email = event.target.value;
     if (!email.match(emailRegex)) {
@@ -192,7 +186,6 @@ export const LandingPage = () => {
       email: event.target.value,
     }));
 
-    console.log(signUpObject.email);
 
     var email = event.target.value;
 
@@ -275,7 +268,6 @@ export const LandingPage = () => {
   };
 
   const checkFirstName = (event) => {
-    console.log(signUpObject.firstName);
     setSignUpObjet((prevObj) => ({
       ...prevObj,
       firstName: event.target.value,
@@ -303,7 +295,6 @@ export const LandingPage = () => {
   };
 
   const checkLastName = (event) => {
-    console.log(signUpObject.lastName);
     setSignUpObjet((prevObj) => ({
       ...prevObj,
       lastName: event.target.value,
@@ -320,7 +311,6 @@ export const LandingPage = () => {
         },
       }));
     } else {
-      console.log(signUpObject);
       setSignUpRegex((previousState) => ({
         ...previousState,
         lastName: {
@@ -526,54 +516,7 @@ export const LandingPage = () => {
                   >
                     Login
                   </Button>
-                  {/* <div
-                    style={{
-                      display: "flex",
-
-                      Gap: "10px",
-                      width: "100%",
-                      flexDirection: "row",
-                      columnGap: "10px",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Button
-                      onClick={() => {
-                        setView(!view);
-                      }}
-                      style={{
-                        background: "#1C266E",
-                        textTransform: "none",
-                        opacity: "0.5",
-                        color: "white",
-                        boxShadow: " 2px  2px 2px 2px grey",
-                      }}
-                      variant="contained"
-                      size="large"
-                      disabled="true"
-                      sx={{
-                        width: "50%",
-                      }}
-                    >
-                      SignIn
-                    </Button>
-                    <Button
-                      style={{
-                        background: "#1C266E",
-                        textTransform: "none",
-                        opacity: "1",
-                        boxShadow: " 2px  2px 2px 2px green",
-                      }}
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        width: "50%",
-                      }}
-                      onClick={() => setView(!view)}
-                    >
-                      SignUp
-                    </Button>
-                  </div> */}
+                 
                   <div style={{ display: "flex", gap: "0.2rem" }}>
                     Not a member?
                     <div

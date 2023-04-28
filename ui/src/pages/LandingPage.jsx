@@ -16,6 +16,7 @@ import { validateEmail, login } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useDispatch, useSelector } from "react-redux";
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const passwordRegex =
@@ -62,6 +63,8 @@ const style3 = {
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const myState = useSelector(state => state.CourseReducer)
   const [snackbar, setSnackbar] = useState(false)
   const [snackbarMessage,setSnackbarMessage]=useState('')
   const [snackbarSeverity,setSnackbarSeverity]=useState('')
@@ -88,6 +91,10 @@ export const LandingPage = () => {
   const [emailLoginDisable, setEmailLoginDisable] = useState("");
 
   const handleLogin = async () => {
+    if(myState.token!=null){
+      console.log(myState.token,myState.userRole);
+      return
+    }
     try {
       var loginResponse = await login(signInObject)
       if(loginResponse){
@@ -95,6 +102,11 @@ export const LandingPage = () => {
         setSnackbar(true)
         setSnackbarMessage('Login Successful')
         setSnackbarSeverity('success')
+        dispatch({
+          type:'updateToken',
+          value:loginResponse.data.data
+      })
+      navigate("/StudentPage")
       }
 
     } catch (err) {

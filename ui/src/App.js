@@ -5,43 +5,23 @@ import { UploadCourse2 } from "./pages/UploadCourse2";
 import DashBoard from "./pages/DashBoard";
 import ProtectedRoute from './Routes/ProtectedRoutes';
 import AuthRoute from './Routes/AuthRoute';
-import { BrowserRouter,Routes,Route } from "react-router-dom";
-
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Provider } from 'react-redux';
+import store from './store';
 
 function App() {
   return (
-
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" exact element={<AuthRoute><SignIn /></AuthRoute>} />
-//         <Route path="/signup" element={<AuthRoute><Signup /></AuthRoute>} />
-//         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-
-//       </Routes>
-      
-//     </BrowserRouter>
-
-
-
-<BrowserRouter>
-<Routes>
-  
-<Route path="/" exact element={<AuthRoute><LandingPage /></AuthRoute>} />
-<Route path="/CourseDetail" element={<ProtectedRoute><CourseDetail/></ProtectedRoute>} />
-<Route path="/UpdateCourse2" element={<ProtectedRoute><UploadCourse2 /></ProtectedRoute>} />
-<Route path="/AdminDashBoard" element={<ProtectedRoute><DashBoard/></ProtectedRoute>} />
-
-      {/* <CourseDetail/> */}
-
-      {/* <UploadCourse2/> */}
-
-      {/* <LandingPage /> */}
-
+    <BrowserRouter>
+    <Provider store={store}>
+      <Routes>
+        <Route path="/" exact element={<AuthRoute><LandingPage /></AuthRoute>} />
+        <Route path="/CourseDetail" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
+        <Route path="/UpdateCourse2" element={<ProtectedRoute><UploadCourse2 /></ProtectedRoute>} />
+        <Route path="/AdminDashBoard" element={<ProtectedRoute><DashBoard /></ProtectedRoute>} />
       </Routes>
-      
-      </BrowserRouter>
- 
+      </Provider>
+    </BrowserRouter>
+
   );
 }
 

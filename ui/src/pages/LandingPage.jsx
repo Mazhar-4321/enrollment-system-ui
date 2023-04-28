@@ -12,8 +12,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { registerUser } from "../services/UserService";
-import { validateEmail } from "../services/UserService";
+import { validateEmail, login } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const passwordRegex =
@@ -57,11 +59,16 @@ const style3 = {
   p: 4,
 };
 
+
 export const LandingPage = () => {
   const navigate = useNavigate();
-
+  const [snackbar, setSnackbar] = useState(false)
+  const [snackbarMessage,setSnackbarMessage]=useState('')
+  const [snackbarSeverity,setSnackbarSeverity]=useState('')
   const [view, setView] = useState(true);
-
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
   const [openForProceed, setOpenForProceed] = React.useState(false);
 
   const [open2, setOpen2] = React.useState(false);
@@ -80,13 +87,21 @@ export const LandingPage = () => {
 
   const [emailLoginDisable, setEmailLoginDisable] = useState("");
 
-  const handleLogin = () => {
-    localStorage.setItem(
-      "token",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NDYyOTYyNWMwNWI1M2FiMDczMDBmNyIsImlhdCI6MTY4MjM5NjE5N30.QF1SkaIlkbo5LftrXkFgPrrlFAG_vqU5FB8CnIFfbzA"
-    );
-    // alert('hi')
-    navigate("/CourseDetail");
+  const handleLogin = async () => {
+    try {
+      var loginResponse = await login(signInObject)
+      if(loginResponse){
+        console.log(loginResponse);
+        setSnackbar(true)
+        setSnackbarMessage('Login Successful')
+        setSnackbarSeverity('success')
+      }
+
+    } catch (err) {
+      setSnackbar(true)
+      setSnackbarMessage('Invalid Username Or Password')
+      setSnackbarSeverity('error')
+    }
   };
 
   const handleUserType = (event) => {
@@ -102,15 +117,27 @@ export const LandingPage = () => {
   };
 
   const handleOtp = async () => {
+    alert(userType)
     const data2 = {
       firstName: signUpObject.firstName,
       lastName: signUpObject.lastName,
       email: signUpObject.email,
       password: signUpObject.password,
       otp: OTP,
-      role: userType,
+      role: userType.toLowerCase(),
     };
+    try{
     const response = await registerUser(data2);
+    if(response){
+      setSnackbar(true);
+      setSnackbarMessage("Registration Success")
+      setSnackbarSeverity('success')
+    }
+    }catch(err){
+      setSnackbar(true);
+      setSnackbarMessage("Registration Failed")
+      setSnackbarSeverity('error')
+    }
   };
 
   const [signInObject, setSignInObject] = useState({
@@ -322,8 +349,20 @@ export const LandingPage = () => {
     }
   };
 
+  const onSnackbarClose = () => {
+    setSnackbar(false)
+  }
+  const onAlertClose = () => {
+    setSnackbar(false)
+  }
+
   return (
     <div>
+      <Snackbar open={snackbar} autoHideDuration={6000} onClose={onSnackbarClose}>
+        <Alert onClose={onAlertClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <div className="origin">
         {/*  */}
 
@@ -516,7 +555,7 @@ export const LandingPage = () => {
                   >
                     Login
                   </Button>
-                 
+
                   <div style={{ display: "flex", gap: "0.2rem" }}>
                     Not a member?
                     <div
@@ -534,9 +573,9 @@ export const LandingPage = () => {
           <Bounce left>
             <div className="Box3">
               <div className="SignUp">
-                <div  
+                <div
 
-                
+
                   style={{
                     display: "flex",
                     rowGap: "1rem",
@@ -544,11 +583,11 @@ export const LandingPage = () => {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                
+
                   }}
-                 >
+                >
                   <h2 className="Projectname">Class Enrollment System</h2>
-                   <div
+                  <div
                     style={{
                       display: "flex",
                       width: "90%",
@@ -556,7 +595,8 @@ export const LandingPage = () => {
                       justifyContent: "center",
                       alignItems: "center",
                       rowGap: "0.5rem",
-                     height : "50%"                }}
+                      height: "50%"
+                    }}
                   >
                     <TextField
                       style={{ maxHeight: "10vh" }}

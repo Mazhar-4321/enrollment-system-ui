@@ -1,0 +1,175 @@
+import React, { useEffect, useState } from "react";
+import '../css/StudentPage.css';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
+import SchoolIcon from '@mui/icons-material/School';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { MyProfile } from "../components/MyProfile";
+import { Course } from "../components/Course";
+import Grid from '@mui/material/Grid';
+import { getAllCourses, getMyCourses } from "../services/StudentService";
+
+export const StudentPage = () => {
+    const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
+    const [myCoursesList, setmyCoursesList] = useState({ data: [] })
+    const [coursesList, setCoursesList] = useState({
+        data: []
+    })
+    const [border, setBorder] = useState({
+        availableCourses: '2px solid #fff',
+        myCourses: null,
+        myProfile: null,
+        logOut: null,
+    })
+    useEffect(() => {
+        const dbCall = async () => {
+            var availableCoursesData = await getAllCourses();
+            var myCoursesData = await getMyCourses('syedmazharali742@gmail.com');
+            setCoursesList(prevData => ({
+                ...prevData, data: availableCoursesData
+            }))
+            setmyCoursesList(prevData => ({
+                ...prevData, data: myCoursesData
+            }))
+            setAvailableCoursesList(prevData => ({
+                ...prevData, data: availableCoursesData
+            }))
+        }
+        dbCall()
+    }, [])
+
+    const [choice, setChoice] = useState('My Courses');
+    const changeFilterValue = (event) => {
+        // setFilter(event.target.value);
+    }
+    const changeChoice = async (choice) => {
+        setBorder(prevBorder => ({
+            ...prevBorder, availableCourses: null, myCourses: null,
+            myProfile: null,
+            logOut: null,
+        }))
+        switch (choice) {
+            case 'My Courses': setChoice('My Courses');
+                setCoursesList(prevData => ({
+                    ...prevData, data: myCoursesList.data
+                }))
+                setBorder(prevBorder => ({
+                    ...prevBorder, myCourses: '2px solid #fff'
+                }))
+                break;
+            case 'Available Courses':
+                setCoursesList(prevData => ({
+                    ...prevData, data: availableCoursesList.data
+                }))
+                setBorder(prevBorder => ({
+                    ...prevBorder, availableCourses: '2px solid #fff'
+                }))
+                setChoice('Available Courses'); break;
+            case 'My Profile': setChoice('My Profile');
+                setBorder(prevBorder => ({
+                    ...prevBorder, myProfile: '2px solid #fff'
+                }))
+                break;
+            case 'Logout': setChoice('Logout');
+                setBorder(prevBorder => ({
+                    ...prevBorder, logOut: '2px solid #fff'
+                }))
+                break;
+
+        }
+    }
+    return (
+       
+        <div className="main-container">
+            <div className="header">
+                <div className="icon">
+                    <AssignmentIcon />
+                    <div>Class Enrollment System</div>
+                </div>
+                <div className="search-bar">
+                    <Paper
+                        onKeyPress={(e) => { if (e.key === 'Enter') { e.preventDefault() } }}
+                        component="form"
+                        sx={{ borderRadius: '10px', height: '35px', background: '#fff', p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+                    >
+                        <IconButton sx={{ p: '10px' }} aria-label="menu">
+                            <SearchIcon />
+                        </IconButton>
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search..."
+                            inputProps={{ 'aria-label': 'search google maps' }}
+                        />
+
+                    </Paper>
+                </div>
+                <div className="user-activities">
+                    <div style={{ border: border.availableCourses, cursor: 'pointer' }} onClick={() => changeChoice('Available Courses')} className="icon-value">
+                        <AccountBalanceIcon />
+                        <div>Available Courses</div>
+                    </div>
+                    <div style={{ border: border.myCourses, cursor: 'pointer' }} onClick={() => changeChoice('My Courses')} className="icon-value">
+                        <SchoolIcon />
+                        <div>My Courses</div>
+                    </div>
+                    <div style={{ border: border.myProfile, cursor: 'pointer' }} onClick={() => changeChoice('My Profile')} className="icon-value">
+                        <PersonOutlineIcon />
+                        <div>My Profile</div>
+                    </div>
+                    <div style={{ border: border.logOut, cursor: 'pointer' }} onClick={() => changeChoice('Logout')} className="icon-value">
+                        <LogoutIcon />
+                        <div>Logout</div>
+                    </div>
+                </div>
+            </div>
+            <div className="body">
+                {/* <div className="filter">
+                    <FormControl style={{ height: '30px', width: '150px', marginRight: '10px', marginTop: '10px', font: 'normal normal normal 12px/15px Lato' }}>
+                        <Select
+                            style={{ height: '30px', font: 'normal normal normal 12px/15px Lato' }}
+                            displayEmpty
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={filter}
+                            label="Age"
+                            input={<OutlinedInput />}
+                            onChange={changeFilterValue}
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem style={{ font: 'normal normal normal 12px/15px Lato' }} value={'Active Courses'}>Active Courses</MenuItem>
+                            <MenuItem style={{ font: 'normal normal normal 12px/15px Lato' }} value={'All Courses'}>All Courses</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </div> */}
+                <div className="course-grid">
+                    {
+                        choice === 'My Profile' ? <MyProfile /> :
+
+                            <Grid container spacing={2}>
+
+                                {
+                                    coursesList.data.map(e => {
+                                        return (
+                                            <Grid item xs={3}>
+                                                <Course isStudent={true} name={e.name} instructor={e.instructor} lastDate={e.lastDate} duration={e.duration} seatsLeft={e.seatsLeft} courseDescription={e.courseDescription} />
+                                            </Grid>
+                                        )
+                                    })
+                                }
+                            </Grid>
+
+
+
+                    }
+                </div>
+                <div className="pagination"></div>
+            </div>
+        </div>
+    )
+}

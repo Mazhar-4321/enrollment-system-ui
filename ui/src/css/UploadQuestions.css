@@ -1,0 +1,41 @@
+.QuestionForm {
+
+
+    /* align-items: center;
+    justify-content: center; */
+    /* background-color: aqua; */
+    height: 85vh;
+    width: 90vw;
+
+}
+
+.QuestinSection {
+    display: flex;
+
+
+    /* border: 2px solid black; */
+}
+
+
+.CorrectAnswer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    /* border: 2px solid pink;*/
+    flex-direction: column;
+}
+
+.EnterQuestions {
+    /* border: 2px solid green; */
+    width: 50%;
+    margin-left: 2rem;
+}
+
+.ButtonGroup{
+display: flex;
+flex-direction: column;
+row-gap: 1rem;
+/* border: 2px solid green; */
+}
+

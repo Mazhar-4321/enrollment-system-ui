@@ -1,9 +1,12 @@
 import axios from "axios";
+import store from '../store'
 const baseURL = 'http://localhost:3005/api/v1/'
+
+const state=store.getState().CourseReducer
 
 export const getAllCourses = async (token) => {
     try {
-        let response = await axios.get(`${baseURL}/students/availableCourses`, {
+        let response = await axios.get(`${baseURL}/students/availableCourses/${state.userDetails.email}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -22,6 +25,74 @@ export const getMyCourses = async (email, token) => {
             }
         })
         console.log(response.data.data)
+        return response.data.data
+    } catch (err) {
+        throw new Error('Connection Refused')
+    }
+}
+
+export const enrollInTheCourse = async(courseId)=>{
+    const state=store.getState().CourseReducer
+    console.log("mai hai user details",state.userDetails)
+    try {
+        let response = await axios.post(`${baseURL}/students/enroll`,{
+            studentId:state.userDetails.email,
+            courseId:courseId
+
+        }, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`
+            }
+        })
+        console.log(response.data.data)
+        return response.data.data
+    } catch (err) {
+        throw new Error('Connection Refused')
+    }
+}
+
+export const getQuiz=async(courseId)=>{
+    const state=store.getState().CourseReducer
+
+    try {
+        let response = await axios.get(`${baseURL}/students/quiz/${courseId}`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`
+            }
+        })
+        console.log(response.data.data)
+        return response.data.data
+    } catch (err) {
+        throw new Error('Connection Refused')
+    }
+}
+
+export const submitQuiz=async(courseId,obj)=>{
+    const state=store.getState().CourseReducer
+
+    try {
+        let response = await axios.post(`${baseURL}/students/quiz/${courseId+","+state.userDetails.email}`,{data:obj}, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`
+            }
+        })
+        console.log(response)
+        return response.data.data
+    } catch (err) {
+        throw new Error('Connection Refused')
+    }
+}
+
+export const getHighestMarks=async(courseId,obj)=>{
+    const state=store.getState().CourseReducer
+
+    try {
+        let response = await axios.get(`${baseURL}/students/marks/${courseId+","+state.userDetails.email}`,{data:obj}, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`
+            }
+        })
+        console.log(response)
         return response.data.data
     } catch (err) {
         throw new Error('Connection Refused')

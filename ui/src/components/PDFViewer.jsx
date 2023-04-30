@@ -15,7 +15,7 @@ export const PDFViewer = (props) => {
     console.log("props", props)
     const myState = useSelector(state => state.CourseReducer)
     const [open, setOpen] = useState(false);
-    const [pdfContent, setPDFContent] = useState('')
+    const [pdfContent, setPDFContent] = useState(props.url)
     const navigate = useNavigate();
     useEffect(() => {
     }, [])

@@ -144,6 +144,8 @@ export const CourseNotes = () => {
                     setTimeout(()=>{
                         element.style.display='none'
                     },10) 
+                }else{
+                    
                 }
                 console.log("ress",getMarks)
                 setBorder(prevBorder => ({

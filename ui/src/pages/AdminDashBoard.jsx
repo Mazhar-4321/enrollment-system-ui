@@ -1,87 +1,40 @@
-import React, { useEffect, useState } from "react";
-import Header from "../Components/Header";
-import { Box, Grid } from "@mui/material";
-import CourseCard from "../Components/CourseCard"
-import { Container } from "@mui/material";
-import "../css/AdminDashBoard.css";
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { UploadCourse2 } from './UploadCourse2';
+import { RemoveCourse } from '../components/RemoveCourse';
+import QuestionForm from './UploadQuestion';
 
+export default function LabTabs() {
+  const [value, setValue] = React.useState('1');
 
-function AdminDashBoard() {
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
-
- return (
-    <Box>
-      <Header />
-      <Grid
-        lg={12}
-        md={12}
-        sm={12}
-        xm={12}
-        spacing={1}
-        container
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          position: "relative",
-          left: 160,
-          width: "81vw",
-          height: "auto",
-          // border: '1px solid black'
-        }}
-      >
-        <>
-          <Container>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                // position: 'relative',
-                // left: 60,
-                // width: 1100
-              }}
-            >
-              <Box>
-                <h3>Courses(90 items)</h3>
-              </Box>
-              <Box>
-                <label for="books">
-                  <select id="sortBooks">
-                    <option value="Relevance">sort by Relevance</option>
-                    <option value="Name">Name</option>
-                    <option value="Category">Category</option>
-                    <option value="Author">Author</option>
-                  </select>
-                </label>
-              </Box>
-            </Box>
-          </Container>
-          <Grid
-            item
-            container
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              width: "83vw",
-              height: "auto",
-              flexGrow: 1,
-            //   border : "2px solid red"
-            }}
-            spacing={3.8}
-            columns={{ xs: 12, sm: 12, md: 12 }}
-            lg={6}
-          >
-            <Grid item lg={9} sm={3}>
-              <CourseCard/>
-            </Grid>
-          </Grid>
-        </>
-   
-      </Grid>
+  return (
+    <Box sx={{ width: '100vw', typography: 'body1' }}>
+      <TabContext  value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList centered flexContainer sx={{ width: '100vw', typography: 'body1' }} onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Dashboard" value="1" />
+            <Tab label="Upload Course" value="2" />
+            <Tab label="Remove Course" value="3" />
+            <Tab label="Approve Course Certificate Requests" value="4" />
+            <Tab label="Logout" value="5" />
+            <Tab label="Upload Quiz" value="6" />
+          </TabList>
+        </Box>
+        <TabPanel value="1">Dashboard</TabPanel>
+        <TabPanel value="2"><UploadCourse2 /></TabPanel>
+        <TabPanel value="3"><RemoveCourse /></TabPanel>
+        <TabPanel value="4">Approve Course Certificate Request</TabPanel>
+        <TabPanel value="5">Logout</TabPanel>
+        <TabPanel value="6"><QuestionForm /></TabPanel>
+      </TabContext>
     </Box>
   );
 }
-
-export default AdminDashBoard;

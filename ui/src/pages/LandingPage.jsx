@@ -11,7 +11,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { registerUser } from "../services/UserService";
+import { registerUser, reset } from "../services/UserService";
 import { validateEmail, login } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
 import Snackbar from '@mui/material/Snackbar';
@@ -66,8 +66,8 @@ export const LandingPage = () => {
   const dispatch = useDispatch();
   const myState = useSelector(state => state.CourseReducer)
   const [snackbar, setSnackbar] = useState(false)
-  const [snackbarMessage,setSnackbarMessage]=useState('')
-  const [snackbarSeverity,setSnackbarSeverity]=useState('')
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarSeverity, setSnackbarSeverity] = useState('')
   const [view, setView] = useState(true);
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -80,7 +80,13 @@ export const LandingPage = () => {
 
   const [userType, setUserType] = React.useState("");
 
-  const handleOpen2 = () => setOpen2(true);
+  const handleOpen2 = async () => {
+    const data = {
+      email: signInObject.email,
+    };
+    await validateEmail(data)
+    setOpen2(true);
+  };
 
   const handleOpen3 = () => setOpen3(true);
 
@@ -91,21 +97,38 @@ export const LandingPage = () => {
   const [emailLoginDisable, setEmailLoginDisable] = useState("");
 
   const handleLogin = async () => {
-    if(myState.token!=null){
+    if (myState.token != null) {
       return
     }
     try {
       var loginResponse = await login(signInObject)
-      console.log("lklklk",loginResponse)
-      if(loginResponse){
+      console.log("lklklk", loginResponse.data.data.split(",")[0])
+      if (loginResponse.data.data.split(",")[0] == 'null') {
+        setSnackbar(true);
+        setSnackbarMessage('Your Admin Privilige is Blocked');
+        setSnackbarSeverity('error');
+        return
+      }
+      if (loginResponse) {
         dispatch({
-          type:'updateToken',
-          value:loginResponse.data.data
-      })
-      navigate("/StudentPage")
+          type: 'updateToken',
+          value: loginResponse.data.data
+        })
+        if (loginResponse.data.data.split(",")[0] == 'admin') {
+          navigate('/AdminPage')
+        } else {
+
+
+          navigate("/StudentPage")
+        }
       }
 
-    } catch (err) {
+
+
+    }
+
+    catch (err) {
+      console.log(err)
       setSnackbar(true)
       setSnackbarMessage('Invalid Username Or Password')
       setSnackbarSeverity('error')
@@ -134,14 +157,14 @@ export const LandingPage = () => {
       otp: OTP,
       role: userType.toLowerCase(),
     };
-    try{
-    const response = await registerUser(data2);
-    if(response){
-      setSnackbar(true);
-      setSnackbarMessage("Registration Success")
-      setSnackbarSeverity('success')
-    }
-    }catch(err){
+    try {
+      const response = await registerUser(data2);
+      if (response) {
+        setSnackbar(true);
+        setSnackbarMessage("Registration Success")
+        setSnackbarSeverity('success')
+      }
+    } catch (err) {
       setSnackbar(true);
       setSnackbarMessage("Registration Failed")
       setSnackbarSeverity('error')
@@ -214,6 +237,25 @@ export const LandingPage = () => {
       }));
     }
   };
+
+  const resetPassword = async () => {
+    try {
+      var response = await reset({
+        otp: OTP,
+        password: signInObject.password,
+        email: signInObject.email
+      })
+      if (response) {
+        setSnackbar(true);
+        setSnackbarMessage('Password Reset Successfully');
+        setSnackbarSeverity('success')
+      }
+    } catch (err) {
+      setSnackbar(true);
+      setSnackbarMessage('Error Resetting Password');
+      setSnackbarSeverity('error')
+    }
+  }
 
   const changeEmailSignup = (event) => {
     setSignUpObjet((prevObj) => ({
@@ -538,7 +580,7 @@ export const LandingPage = () => {
                           variant="outlined"
                         />
                         <Button
-                          onClick={() => alert("you are logged in...")}
+                          onClick={() => resetPassword()}
                           fullWidth
                           style={{
                             background: "#1C266E",

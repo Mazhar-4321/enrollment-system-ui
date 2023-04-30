@@ -1,0 +1,36 @@
+.card {
+    width: 235px;
+    height: 285px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #E2E2E2;
+    border-radius: 3px;
+    opacity: 1;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+p,
+span {
+    margin-top: 5px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+mark {
+    background-color: #A03037;
+    color: white;
+}
+
+.card-image {
+    height: 63%;
+    background: #F5F5F5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-image-display {
+    width: 105px;
+    height: 135px
+}

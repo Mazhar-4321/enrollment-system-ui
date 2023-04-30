@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { StudentPage } from "./pages/StudentPage";
 import {  useSelector } from "react-redux";
+import { CourseNotes } from "./pages/CourseNotes";
 const AppWrapper = () => {
 
   return (
@@ -26,10 +27,11 @@ function App() {
       
       <Routes>
         <Route path="/" exact element={<AuthRoute><LandingPage /></AuthRoute>} />
-        <Route  path="/CourseDetail" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
+        <Route  path="/CourseDetail" element={<StudentProtectedRoute><CourseDetail /></StudentProtectedRoute>} />
         <Route path="/UpdateCourse2" element={<ProtectedRoute><UploadCourse2 /></ProtectedRoute>} />
         <Route path="/AdminDashBoard" element={<ProtectedRoute><DashBoard /></ProtectedRoute>} />
         <Route  path="/StudentPage"  element={<StudentProtectedRoute> <StudentPage /> </StudentProtectedRoute>} />
+        <Route  path="/CourseNotes"  element={<StudentProtectedRoute> <CourseNotes/></StudentProtectedRoute>} />
       </Routes>
       
     </BrowserRouter>

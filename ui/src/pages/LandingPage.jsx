@@ -92,16 +92,12 @@ export const LandingPage = () => {
 
   const handleLogin = async () => {
     if(myState.token!=null){
-      console.log(myState.token,myState.userRole);
       return
     }
     try {
       var loginResponse = await login(signInObject)
+      console.log("lklklk",loginResponse)
       if(loginResponse){
-        console.log(loginResponse);
-        setSnackbar(true)
-        setSnackbarMessage('Login Successful')
-        setSnackbarSeverity('success')
         dispatch({
           type:'updateToken',
           value:loginResponse.data.data

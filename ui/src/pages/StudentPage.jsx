@@ -12,9 +12,12 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { MyProfile } from "../components/MyProfile";
 import { Course } from "../components/Course";
 import Grid from '@mui/material/Grid';
+import { useDispatch, useSelector } from "react-redux";
 import { getAllCourses, getMyCourses } from "../services/StudentService";
 
 export const StudentPage = () => {
+    const myState = useSelector(state => state.CourseReducer)
+    const dispatch = useDispatch()
     const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
     const [myCoursesList, setmyCoursesList] = useState({ data: [] })
     const [coursesList, setCoursesList] = useState({
@@ -27,9 +30,11 @@ export const StudentPage = () => {
         logOut: null,
     })
     useEffect(() => {
+        console.log("user details hai bhai ye",myState.userDetails)
         const dbCall = async () => {
             var availableCoursesData = await getAllCourses();
-            var myCoursesData = await getMyCourses('syedmazharali742@gmail.com');
+            console.log("available courses", availableCoursesData)
+            var myCoursesData = await getMyCourses(myState.userDetails.email);
             setCoursesList(prevData => ({
                 ...prevData, data: availableCoursesData
             }))
@@ -39,11 +44,18 @@ export const StudentPage = () => {
             setAvailableCoursesList(prevData => ({
                 ...prevData, data: availableCoursesData
             }))
+            dispatch({
+                type:'updateStudentCourses',
+                value:{
+                   myCourses:myCoursesData
+
+                }
+            })
         }
         dbCall()
     }, [])
 
-    const [choice, setChoice] = useState('My Courses');
+    const [choice, setChoice] = useState('Available Courses');
     const changeFilterValue = (event) => {
         // setFilter(event.target.value);
     }
@@ -84,7 +96,7 @@ export const StudentPage = () => {
         }
     }
     return (
-       
+
         <div className="main-container">
             <div className="header">
                 <div className="icon">
@@ -128,25 +140,7 @@ export const StudentPage = () => {
                 </div>
             </div>
             <div className="body">
-                {/* <div className="filter">
-                    <FormControl style={{ height: '30px', width: '150px', marginRight: '10px', marginTop: '10px', font: 'normal normal normal 12px/15px Lato' }}>
-                        <Select
-                            style={{ height: '30px', font: 'normal normal normal 12px/15px Lato' }}
-                            displayEmpty
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={filter}
-                            label="Age"
-                            input={<OutlinedInput />}
-                            onChange={changeFilterValue}
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            <MenuItem style={{ font: 'normal normal normal 12px/15px Lato' }} value={'Active Courses'}>Active Courses</MenuItem>
-                            <MenuItem style={{ font: 'normal normal normal 12px/15px Lato' }} value={'All Courses'}>All Courses</MenuItem>
-
-                        </Select>
-                    </FormControl>
-                </div> */}
+                
                 <div className="course-grid">
                     {
                         choice === 'My Profile' ? <MyProfile /> :
@@ -157,7 +151,7 @@ export const StudentPage = () => {
                                     coursesList.data.map(e => {
                                         return (
                                             <Grid item xs={3}>
-                                                <Course isStudent={true} name={e.name} instructor={e.instructor} lastDate={e.lastDate} duration={e.duration} seatsLeft={e.seatsLeft} courseDescription={e.courseDescription} />
+                                                <Course choice={choice} disabled={myState.coursesEnrolled.has(e.c_id)} isStudent={true} id={e.c_id} name={e.name} instructor={e.instructor} lastDate={e.lastDate} duration={e.duration} seatsLeft={e.seatsLeft} courseDescription={e.course_description} />
                                             </Grid>
                                         )
                                     })

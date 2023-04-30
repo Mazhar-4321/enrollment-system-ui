@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../css/UploadQuestions.css";
-import Header from "../Components/Header";
+import Header from "../components/Header";
 import {
   Button,
   TextField,
@@ -52,7 +52,7 @@ const QuestionForm = () => {
 
   return (
     <div>
-      <Header />
+     
 
       <div className="QuestionForm">
         <h3 style={{marginLeft : "2rem",color : "#1c266e"}}>Add Questions </h3>

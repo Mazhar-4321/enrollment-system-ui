@@ -17,4 +17,13 @@ export const StudentProtectedRoute =({children})=>{
   }
   return <Navigate to="/" />
 }
+
+export const AdminProtectedRoute =({children})=>{
+  const state=store.getState().CourseReducer
+  console.log("mai hu na",state)
+  if(state.token!=null&&state.userRole==='admin'){
+    return children;
+  }
+  return <Navigate to="/" />
+}
 export default ProtectedRoute;

@@ -16,8 +16,9 @@ import Image1 from '../images/myImage.png';
 import html2pdf from "html-to-pdf-js";
 import { Course } from "../components/Course";
 import Grid from '@mui/material/Grid';
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCourses, getHighestMarks, getMyCourses, getQuiz } from "../services/StudentService";
+import { cancelCourse, getAllCourses, getHighestMarks, getMyCourses, getQuiz } from "../services/StudentService";
 import { pickersToolbarButtonClasses } from "@mui/x-date-pickers/internals";
 import { PDFViewer } from "../components/PDFViewer";
 import { useLocation } from "react-router-dom";
@@ -30,6 +31,8 @@ export const CourseNotes = () => {
     const myState = useSelector(state => state.CourseReducer)
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
+
     let grade='A';
     const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
     const [myCoursesList, setmyCoursesList] = useState({ data: [] })
@@ -109,6 +112,15 @@ export const CourseNotes = () => {
                 setChoice('Take Quiz'); break;
             case 'Cancel Course':
                 setChoice('Cancel Course');
+                var cancelCourse1= await cancelCourse(location.state.id);
+                console.log("cancellll",cancelCourse1)
+                if(cancelCourse1){
+                    dispatch({
+                        type:'delteCourse',
+                        value:location.state.id
+                    })
+                    navigate("/StudentPage");
+                }
                 setBorder(prevBorder => ({
                     ...prevBorder, cancelCourse: '2px solid #fff'
                 }))

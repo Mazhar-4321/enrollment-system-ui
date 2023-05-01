@@ -4,6 +4,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Select from '@mui/material/Select';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import {
   Button,
   TextField,
@@ -14,13 +16,29 @@ import {
   FormLabel,
 } from "@mui/material";
 import { addQuiz, getMyCourses } from "../services/AdminService";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+let questionsMap = new Map();
 
 
 const QuestionForm = () => {
   const [questions, setQuestions] = useState([]);
   const [course, setCourse] = useState('');
   const [courses, setCourses] = useState([])
-
+  const [count, setCount] = useState(0);
+  const [snackbar, setSnackbar] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarSeverity, setSnackbarSeverity] = useState('');
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
   const handleChange = (event) => {
     setCourse(event.target.value);
   };
@@ -44,38 +62,106 @@ const QuestionForm = () => {
   }, [])
 
   const handleAddQuestion = () => {
+    console.log(questionsMap)
+    if (course.length == 0) {
+      setSnackbar(true);
+      setSnackbarMessage("Select The Course or Upload Course And Get Back...");
+      setSnackbarSeverity("error");
+      return
+    }
+    if (newQuestion.length == 0 || newOption1.length == 0 || newOption2.length == 0 || newOption3.length == 0 ||
+      newOption4.length == 0) {
+      setSnackbar(true);
+      setSnackbarMessage("Questions And Options Can't be Empty");
+      setSnackbarSeverity("error");
+      return
+    }
+
+    if (questionsMap.has(newQuestion)) {
+      setSnackbar(true);
+      setSnackbarMessage("Question Already Taken");
+      setSnackbarSeverity("error")
+      return;
+    }
+    var map = new Map()
+    map.set(newOption1, 1);
+    map.set(newOption2, 1);
+    map.set(newOption3, 1);
+    map.set(newOption4, 1);
+    if (map.size < 4) {
+      setSnackbar(true);
+      setSnackbarMessage("Duplicate Options");
+      setSnackbarSeverity("error")
+      return
+    }
+    if (newCorrectAnswer.length < 1) {
+      setSnackbar(true);
+      setSnackbarMessage("Select An Option");
+      setSnackbarSeverity("error")
+      return
+    }
     const newQuestionObj = {
       question: newQuestion,
-      question_id:Date.now(),
+      question_id: Date.now(),
       options: [newOption1, newOption2, newOption3, newOption4],
-      correctAnswer: newCorrectAnswer==0?newOption1:(newCorrectAnswer==1?newOption2:(newCorrectAnswer==2?newOption3:newOption4)),
+      correctAnswer: newCorrectAnswer == 0 ? newOption1 : (newCorrectAnswer == 1 ? newOption2 : (newCorrectAnswer == 2 ? newOption3 : newOption4)),
     };
 
     setQuestions([...questions, newQuestionObj]);
-
+    questionsMap.set(newQuestion, 1)
     setNewQuestion("");
     setNewOption1("");
     setNewOption2("");
     setNewOption3("");
     setNewOption4("");
     setNewCorrectAnswer("");
+    setSnackbar(true);
+    setSnackbarMessage("Question Added To List Successfully");
+    setSnackbarSeverity("success")
+    setCount(count + 1)
 
-    console.log("In handleAddQuestions----> ", questions);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("In handleSubmit---->  ", questions);
-    var response = await addQuiz(course, questions)
+    if (count < 10) {
+      setSnackbarMessage("Minimum 10 Questions Are Expected");
+      setSnackbar(true)
+      setSnackbarSeverity("info");
+      return
+    }
+    var response = await addQuiz(course, questions);
+    if (response) {
+      setSnackbarMessage("Quiz Uploaded Successfully");
+      setSnackbar(true)
+      setSnackbarSeverity("success");
+    }
   };
 
   const handleOptionChange = (event) => {
     setNewCorrectAnswer(event.target.value);
   };
-
+  const onSnackbarClose = () => {
+    setSnackbar(false)
+  }
+  const onAlertClose = () => {
+    setSnackbar(false)
+  }
   return (
     <div>
-
+      <p style={{ fontSize: '25px', marginLeft: '200px' }}>{count} Question/s Added To List</p>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+        onClick={handleClose}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Snackbar open={snackbar} autoHideDuration={2000} onClose={onSnackbarClose}>
+        <Alert onClose={onAlertClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 
       <div className="QuestionForm">
         <h3 style={{ marginLeft: "2rem", color: "#1c266e" }}>Add Questions </h3>

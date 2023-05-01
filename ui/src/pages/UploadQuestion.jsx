@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../css/UploadQuestions.css";
-import Header from "../components/Header";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import Select from '@mui/material/Select';
 import {
   Button,
   TextField,
@@ -10,11 +13,17 @@ import {
   FormControl,
   FormLabel,
 } from "@mui/material";
+import { addQuiz, getMyCourses } from "../services/AdminService";
 
 
 const QuestionForm = () => {
   const [questions, setQuestions] = useState([]);
+  const [course, setCourse] = useState('');
+  const [courses, setCourses] = useState([])
 
+  const handleChange = (event) => {
+    setCourse(event.target.value);
+  };
   const [newQuestion, setNewQuestion] = useState("");
   const [newOption1, setNewOption1] = useState("");
   const [newOption2, setNewOption2] = useState("");
@@ -22,11 +31,24 @@ const QuestionForm = () => {
   const [newOption4, setNewOption4] = useState("");
   const [newCorrectAnswer, setNewCorrectAnswer] = useState("");
 
+  useEffect(() => {
+    const dbCall = async () => {
+      try {
+        var response = await getMyCourses()
+        setCourses(response)
+      } catch (err) {
+        console.log("err", err)
+      }
+    }
+    dbCall()
+  }, [])
+
   const handleAddQuestion = () => {
     const newQuestionObj = {
       question: newQuestion,
+      question_id:Date.now(),
       options: [newOption1, newOption2, newOption3, newOption4],
-      correctAnswer: newCorrectAnswer,
+      correctAnswer: newCorrectAnswer==0?newOption1:(newCorrectAnswer==1?newOption2:(newCorrectAnswer==2?newOption3:newOption4)),
     };
 
     setQuestions([...questions, newQuestionObj]);
@@ -41,9 +63,10 @@ const QuestionForm = () => {
     console.log("In handleAddQuestions----> ", questions);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("In handleSubmit---->  ", questions);
+    var response = await addQuiz(course, questions)
   };
 
   const handleOptionChange = (event) => {
@@ -52,11 +75,24 @@ const QuestionForm = () => {
 
   return (
     <div>
-     
+
 
       <div className="QuestionForm">
-        <h3 style={{marginLeft : "2rem",color : "#1c266e"}}>Add Questions </h3>
-
+        <h3 style={{ marginLeft: "2rem", color: "#1c266e" }}>Add Questions </h3>
+        <Box sx={{ width: 200, marginLeft: '30px' }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Courses</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={course}
+              label="Age"
+              onChange={handleChange}
+            >
+              {courses.map(e => <MenuItem value={e.c_id}>{e.name}</MenuItem>)}
+            </Select>
+          </FormControl>
+        </Box>
         <div className="QuestinSection">
           <div className="EnterQuestions">
             <TextField
@@ -115,34 +151,34 @@ const QuestionForm = () => {
                 onChange={handleOptionChange}
               >
                 <FormControlLabel
-                  value="option1"
+                  value={0}
                   control={<Radio />}
                   label="Option 1"
                 />
                 <FormControlLabel
-                  value="option2"
+                  value={1}
                   control={<Radio />}
                   label="Option 2"
                 />
                 <FormControlLabel
-                  value="option3"
+                  value={2}
                   control={<Radio />}
                   label="Option 3"
                 />
                 <FormControlLabel
-                  value="option4"
+                  value={3}
                   control={<Radio />}
                   label="Option 4"
                 />
               </RadioGroup>
             </FormControl>
             <div className="ButtonGroup">
-            <Button className="AddButton" onClick={handleAddQuestion} variant="contained">
-              Add question
-            </Button>
-            <Button className="SubmitButton" onClick={handleSubmit} variant="contained">
-              Submit Questions
-            </Button>
+              <Button className="AddButton" onClick={handleAddQuestion} variant="contained">
+                Add question
+              </Button>
+              <Button className="SubmitButton" onClick={handleSubmit} variant="contained">
+                Submit Questions
+              </Button>
             </div>
           </div>
         </div>

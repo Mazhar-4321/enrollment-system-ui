@@ -11,13 +11,15 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { MyProfile } from "../components/MyProfile";
 import { Course } from "../components/Course";
+import { useNavigate } from "react-router-dom";
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCourses, getMyCourses } from "../services/StudentService";
 
 export const StudentPage = () => {
     const myState = useSelector(state => state.CourseReducer)
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
     const [myCoursesList, setmyCoursesList] = useState({ data: [] })
     const [coursesList, setCoursesList] = useState({
@@ -88,6 +90,10 @@ export const StudentPage = () => {
                 }))
                 break;
             case 'Logout': setChoice('Logout');
+             dispatch({
+                type:'removeToken'
+            })
+            navigate("/");
                 setBorder(prevBorder => ({
                     ...prevBorder, logOut: '2px solid #fff'
                 }))

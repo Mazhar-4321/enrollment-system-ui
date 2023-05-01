@@ -260,12 +260,13 @@ export function UploadCourse2() {
 
                 </input>
                 <label style={{ border: '1px solid rgb(0,0,0,0.5', padding: '10px 10px 10px 10px', cursor: 'pointer' }} for="img">Click me to upload image</label>
-                <div>
+               
+              </div>
+              <div style={{display:'flex',width:'100%',justifyContent:'center',alignItems:'center',flexWrap:'wrap'}}>
                   {
-                    files.map(v => <div key={v.name} style={{ cursor: 'pointer' }} onClick={() => { setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
+                    files.map(v => <div style={{border:'1px solid rgb(0,0,0,0.5)',marginRight:'10px',cursor:'pointer',padding:'4px 4px 4px 4px'}} key={v.name}  onClick={() => { setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
                   }
                 </div>
-              </div>
               <div className="tfRow4">
                 <Buttons
                   variant="contained"

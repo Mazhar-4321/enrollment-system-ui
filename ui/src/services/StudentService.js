@@ -1,8 +1,8 @@
 import axios from "axios";
 import store from '../store'
-const baseURL = 'http://localhost:3007/api/v1/'
+const baseURL = 'http://localhost:3008/api/v1/'
 
-const state=store.getState().CourseReducer
+const state = store.getState().CourseReducer
 
 export const getAllCourses = async (token) => {
     try {
@@ -31,13 +31,13 @@ export const getMyCourses = async (email, token) => {
     }
 }
 
-export const enrollInTheCourse = async(courseId)=>{
-    const state=store.getState().CourseReducer
-    console.log("mai hai user details",state.userDetails)
+export const enrollInTheCourse = async (courseId) => {
+    const state = store.getState().CourseReducer
+    console.log("mai hai user details", state.userDetails)
     try {
-        let response = await axios.post(`${baseURL}/students/enroll`,{
-            studentId:state.userDetails.email,
-            courseId:courseId
+        let response = await axios.post(`${baseURL}/students/enroll`, {
+            studentId: state.userDetails.email,
+            courseId: courseId
 
         }, {
             headers: {
@@ -51,8 +51,8 @@ export const enrollInTheCourse = async(courseId)=>{
     }
 }
 
-export const getQuiz=async(courseId)=>{
-    const state=store.getState().CourseReducer
+export const getQuiz = async (courseId) => {
+    const state = store.getState().CourseReducer
 
     try {
         let response = await axios.get(`${baseURL}/students/quiz/${courseId}`, {
@@ -67,11 +67,11 @@ export const getQuiz=async(courseId)=>{
     }
 }
 
-export const submitQuiz=async(courseId,obj)=>{
-    const state=store.getState().CourseReducer
+export const submitQuiz = async (courseId, obj) => {
+    const state = store.getState().CourseReducer
 
     try {
-        let response = await axios.post(`${baseURL}/students/quiz/${courseId+","+state.userDetails.email}`,{data:obj}, {
+        let response = await axios.post(`${baseURL}/students/quiz/${courseId + "," + state.userDetails.email}`, { data: obj }, {
             headers: {
                 'Authorization': `Bearer ${state.token}`
             }
@@ -83,17 +83,36 @@ export const submitQuiz=async(courseId,obj)=>{
     }
 }
 
-export const getHighestMarks=async(courseId,obj)=>{
-    const state=store.getState().CourseReducer
+export const getHighestMarks = async (courseId, obj) => {
+    const state = store.getState().CourseReducer
 
     try {
-        let response = await axios.get(`${baseURL}/students/marks/${courseId+","+state.userDetails.email}`,{data:obj}, {
+        let response = await axios.get(`${baseURL}/students/marks/${courseId + "," + state.userDetails.email}`, { data: obj }, {
             headers: {
                 'Authorization': `Bearer ${state.token}`
             }
         })
         console.log(response)
         return response.data.data
+    } catch (err) {
+        throw new Error('Connection Refused')
+    }
+}
+
+export const cancelCourse = async (courseId) => {
+    const state = store.getState().CourseReducer
+    console.log(courseId, state.userDetails.email)
+    try {
+        let response = await axios.post(`${baseURL}/students/cancelCourse/`, {
+            courseId: courseId,
+            studentId: state.userDetails.email
+        }, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`
+            }
+        })
+        console.log(response)
+        return response.data
     } catch (err) {
         throw new Error('Connection Refused')
     }

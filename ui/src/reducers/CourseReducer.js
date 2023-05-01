@@ -48,8 +48,17 @@ const CourseReducer = ((state = initialState, action) => {
                 return {
                     ...state, token: tokenArray[2], userRole: tokenArray[0], userDetails: { email: tokenArray[1] }
                 }
-        case 'updateTestDetails':
-            return null;
+        case 'delteCourse':
+            var id=action.value
+            var newMap=state.coursesEnrolled;
+            newMap.delete(id)
+            return{
+                ...state,coursesEnrolled:newMap
+            }
+            case 'removeToken':
+                return{
+                    ...state,token:null,userDetails: { firstName: null, lastName: null, email: null }
+                }
 
 
 

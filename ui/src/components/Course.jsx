@@ -48,7 +48,7 @@ export const Course = (props) => {
                     }
                 })
                 break;
-            case 'My Courses': alert(props.choice);
+            case 'My Courses': 
                 navigate("/CourseNotes", {
                     state: {
                         id: props.id,

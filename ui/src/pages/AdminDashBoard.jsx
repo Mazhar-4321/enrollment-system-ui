@@ -7,11 +7,24 @@ import TabPanel from '@mui/lab/TabPanel';
 import { UploadCourse2 } from './UploadCourse2';
 import { RemoveCourse } from '../components/RemoveCourse';
 import QuestionForm from './UploadQuestion';
+import { useNavigate } from "react-router-dom";
+import { useDispatch} from "react-redux";
+import ApproveCourseCertificateRequest from '../components/ApproveCourseCertificateRequest';
+
+
 
 export default function LabTabs() {
   const [value, setValue] = React.useState('1');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (event, newValue) => {
+    if(newValue==5){
+      dispatch({
+        type:'removeToken'
+    })
+    navigate("/");
+    }
     setValue(newValue);
   };
 
@@ -31,7 +44,7 @@ export default function LabTabs() {
         <TabPanel value="1">Dashboard</TabPanel>
         <TabPanel value="2"><UploadCourse2 /></TabPanel>
         <TabPanel value="3"><RemoveCourse /></TabPanel>
-        <TabPanel value="4">Approve Course Certificate Request</TabPanel>
+        <TabPanel value="4"><ApproveCourseCertificateRequest /></TabPanel>
         <TabPanel value="5">Logout</TabPanel>
         <TabPanel value="6"><QuestionForm /></TabPanel>
       </TabContext>

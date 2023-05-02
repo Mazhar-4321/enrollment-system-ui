@@ -30,10 +30,12 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 let map = new Map()
 export const TakeQuiz = (props) => {
+    console.log(props.quiz)
     const [open, setOpen] = React.useState(true);
     const [number, setNumber] = React.useState(0)
     const [snackbarMessage, setSnackbarMessage] = React.useState('')
     const [snackbar, setSnackbar] = React.useState(false)
+    const [snackbar1, setSnackbar1] = React.useState(true)
     const [backdrop, setBackdrop] = React.useState(false)
     const [questionSelected, setQuestionSelected] = React.useState(0)
     const [selected, setSelected] = React.useState(false)
@@ -41,6 +43,8 @@ export const TakeQuiz = (props) => {
     const [studentAnswers, setStudentAnswers] = React.useState(props.quiz)
     useEffect(() => {
         const newStudentAnswers = [];
+        
+        if(studentAnswers!=null)
         studentAnswers.forEach(q => {
             return {
                 question_id: q.question_id,
@@ -133,7 +137,7 @@ export const TakeQuiz = (props) => {
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
-            <div>
+           { props.quiz.length>0?<div>
 
                 <Dialog
                     fullScreen
@@ -184,6 +188,13 @@ export const TakeQuiz = (props) => {
 
                 </Dialog>
             </div>
+            :
+            <Snackbar open={snackbar1} onClose={() => setSnackbar1(false)} autoHideDuration={1000} >
+                <Alert severity="info" sx={{ width: '100%' }}>
+                   No Quiz Questions Available For This Course
+                </Alert>
+            </Snackbar>
+}
         </>
 
     );

@@ -142,7 +142,7 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                    setSnackbarSeverity("error");
                    return
                 }
-                if(getMarks[0].max>6){
+                if(getMarks=='Success'){
                     console.log("Pass",getMarks[0].max-1);
                     if(getMarks[0]>8){
                         grade='A'
@@ -161,7 +161,7 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                    // html2pdf(element)
                    var opt = {
                     margin:       0,
-                    filename:     'Himanshu.pdf',
+                    filename:     `${myState.userDetails.firstName}`,
                     image:        { type: 'jpeg', quality: 1 },
                     html2canvas:  { scale: 2 },
                     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }

@@ -1,85 +1,49 @@
-import Header from "../Components/Header";
+import Header from "../components/Header.jsx";
 import { Box, Grid } from "@mui/material";
-import CourseCard from "../Components/CourseCard"
+import CourseCard from "../components/CourseCard.jsx"
 import { Container } from "@mui/material";
+import Pie from "../components/PieGraph.js";
+import * as d3 from "d3";
+import { useEffect, useState } from "react";
+import { getDashboardData } from "../services/AdminService.js";
 
 
 
 function DashBoard() {
+  const [visualData, setVisualData] = useState([])
 
+  useEffect(()=>{
+    const dbCall = async () => {
+      var response = await getDashboardData();
+      console.log("statr")
+      d3.range(response.length).map((item, idx) => ({
+        date: idx,
+        value: value === null || value === undefined ? Math.random() * 100 : value
+      }));
+  
+      setVisualData(response)
+    }
+    dbCall();
+  },[])
+  const generateData = (value, length = 5) =>
+    d3.range(length).map((item, idx) => ({
+      date: idx,
+      value: value === null || value === undefined ? Math.random() * 100 : value
+    }));
 
- return (
-    <Box>
-      <Header />
-      <Grid
-        lg={12}
-        md={12}
-        sm={12}
-        xm={12}
-        spacing={1}
-        container
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          position: "relative",
-          left: 160,
-          width: "81vw",
-          height: "auto",
-          // border: '1px solid black'
-        }}
-      >
-        <>
-          <Container>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                // position: 'relative',
-                // left: 60,
-                // width: 1100
-              }}
-            >
-              <Box>
-                <h3>Courses(90 items)</h3>
-              </Box>
-              <Box>
-                <label for="books">
-                  <select id="sortBooks">
-                    <option value="Relevance">sort by Relevance</option>
-                    <option value="Name">Name</option>
-                    <option value="Category">Category</option>
-                    <option value="Author">Author</option>
-                  </select>
-                </label>
-              </Box>
-            </Box>
-          </Container>
-          <Grid
-            item
-            container
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              width: "83vw",
-              height: "auto",
-              flexGrow: 1,
-            //   border : "2px solid red"
-            }}
-            spacing={3.8}
-            columns={{ xs: 12, sm: 12, md: 12 }}
-            lg={6}
-          >
-            <Grid item lg={9} sm={3}>
-              <CourseCard/>
-            </Grid>
-          </Grid>
-        </>
-   
-      </Grid>
-    </Box>
+  const [data, setData] = useState(generateData());
+  const changeData = () => {
+    setData(generateData());
+  };
+
+  return (
+    <div style={{ width: '100%' }}> <Pie
+      data={data}
+      width={200}
+      height={200}
+      innerRadius={60}
+      outerRadius={100}
+    /></div>
   );
 }
 

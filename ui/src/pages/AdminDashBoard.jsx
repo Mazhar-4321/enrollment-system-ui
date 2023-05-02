@@ -21,11 +21,7 @@ export default function LabTabs() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   React.useEffect(() => {
-    const dbCall = async () => {
-      var response = await getDashboardData();
-      setVisualData(response)
-    }
-    dbCall();
+    
   }, [])
   const handleChange = (event, newValue) => {
     if (newValue == 5) {

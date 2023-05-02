@@ -130,9 +130,7 @@ export function UploadCourse2() {
   const [value, setValue] = React.useState(dayjs('2023-05-01'));
   const uploadImage = async (files) => {
 
-    Object.entries(files).forEach((key, value) => {
-      console.log(key, value)
-    })
+   
     for (const [key, file] of Object.entries(files)) {
       const imageRef = ref(storage, `images/${file.name}`)
       uploadBytes(imageRef, file).then((res) => getDownloadURL(res.ref)).then((err) => {
@@ -350,7 +348,7 @@ export function UploadCourse2() {
                   <DemoContainer components={['DatePicker', 'DatePicker']}>
 
                     <DatePicker
-                      label="Controlled picker"
+                      label="Last Date To Enroll"
                       value={value}
                       format="YYYY/MM/DD"
                       onChange={(newValue) => changeLastDayToEnroll(newValue)}

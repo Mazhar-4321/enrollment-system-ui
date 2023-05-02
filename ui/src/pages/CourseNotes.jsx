@@ -23,16 +23,23 @@ import { pickersToolbarButtonClasses } from "@mui/x-date-pickers/internals";
 import { PDFViewer } from "../components/PDFViewer";
 import { useLocation } from "react-router-dom";
 import { TakeQuiz } from "../components/TakeQuiz";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { ClaimCertificate } from "../components/ClaimCertificate";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 export const CourseNotes = () => {
     const myState = useSelector(state => state.CourseReducer)
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-
+const [snackbar,setSnackbar]=useState(false)
+const [snackbarMessage,setSnackbarMessage]=useState('')
+const [snackbarSeverity,setSnackbarSeverity]=useState('')
     let grade='A';
     const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
     const [myCoursesList, setmyCoursesList] = useState({ data: [] })
@@ -128,6 +135,13 @@ export const CourseNotes = () => {
             case 'Claim Certificate':
                 setChoice('Claim Certificate');
                 var getMarks=await getHighestMarks(location.state.id);
+                console.log("got marks",getMarks)
+                if(getMarks=='Fail'){
+                   setSnackbar(true);
+                   setSnackbarMessage("Certificate Can't be downloaded")
+                   setSnackbarSeverity("error");
+                   return
+                }
                 if(getMarks[0].max>6){
                     console.log("Pass",getMarks[0].max-1);
                     if(getMarks[0]>8){
@@ -157,7 +171,10 @@ export const CourseNotes = () => {
                         element.style.display='none'
                     },10) 
                 }else{
-                    
+                    setSnackbar(true);
+                    setSnackbarMessage("Minimum 80% Required To Download Certificate")
+                    setSnackbarSeverity("error");
+                    return
                 }
                 console.log("ress",getMarks)
                 setBorder(prevBorder => ({
@@ -170,7 +187,11 @@ export const CourseNotes = () => {
     return (
 
         <div className="main-container">
-           
+             <Snackbar open={snackbar} onClose={() => setSnackbar(false)} autoHideDuration={1000} >
+                <Alert severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
             <div className="header">
                 <div className="icon">
                     <AssignmentIcon />

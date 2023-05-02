@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../css/UploadCourse2.css";
 import Buttons from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { Button, message, Upload } from "antd";
@@ -13,7 +17,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { uploadCourse } from "../services/AdminService";
+import { checkIfFileExists, deleteFileById, getCourseById, getMyCourses, updateCourse, uploadCourse } from "../services/AdminService";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
@@ -38,11 +42,81 @@ const props = {
 
 export function UploadCourse2() {
   const [files, setFiles] = useState([]);
+  const [currentCourseId, setCurrentCourseId] = useState('abcdef');
+  const [course, setCourse] = useState('');
+  const [courses, setCourses] = useState([]);
+  const [courseObject, setCourseObject] = useState({ courseName: '', courseDescription: '', lastDayToEnroll: '', duration: '', seatsLeft: '', notes: [], instructorName: '' })
+
   const [flag, setFlag] = useState(true);
   const [snackbar, setSnackbar] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [snackbarSeverity, setSnackbarSeverity] = useState('')
   let imagesLink = [];
+  const [age, setAge] = React.useState('');
+  useEffect(() => {
+    const dbCall = async () => {
+      try {
+        var response = await getMyCourses();
+        response.push({
+          c_id: 'abcdef',
+          course_description: '',
+          duration: '',
+          instructor: '',
+          lastDate: '',
+          name: 'New',
+          seatsLeft: ''
+        })
+        setCourses(response)
+        // console.log("split",response.notes.split(","))
+        setFiles(response.notes.split(","))
+      } catch (err) {
+        console.log("err", err)
+      }
+    }
+    dbCall()
+  }, [])
+
+  const getCourseDetails = async (courseId) => {
+    try {
+      setCurrentCourseId(courseId)
+      if (courseId == 'abcdef') {
+        setCourseObject(prevObject => ({
+          ...prevObject, courseName: '',
+          courseDescription: '',
+          lastDayToEnroll: '',
+          duration: '',
+          instructorName: ''
+        }))
+        setFiles([])
+        return
+      }
+      var courseDetails = await getCourseById(courseId);
+      console.log("values", courseDetails)
+      setCourseObject(prevObject => ({
+        ...prevObject, courseName: courseDetails[0].name,
+        courseDescription: courseDetails[0].course_description,
+        lastDayToEnroll: courseDetails[0].name,
+        duration: courseDetails[0].duration,
+        instructorName: courseDetails[0].instructor
+      }))
+      if (courseDetails[0].notes) {
+        var array = courseDetails[0].notes.split(",");
+        var newArray = array.map(e => {
+          var split = e.split("~")
+          return {
+            name: split[1],
+            path: split[0]
+          }
+        })
+        setFiles(newArray)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const handleChange = (event) => {
+    setCourse(event.target.value);
+  };
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -53,9 +127,8 @@ export function UploadCourse2() {
   const handleOpen = () => {
     setOpen(true);
   };
-  const [value, setValue] = React.useState(dayjs('2022-04-17'));
-  const [courseObject, setCourseObject] = useState({ courseName: '', courseDescription: '', lastDayToEnroll: '', duration: '', seatsLeft: '', notes: [], instructorName: '' })
-  const uploadImage = async () => {
+  const [value, setValue] = React.useState(dayjs('2023-05-01'));
+  const uploadImage = async (files) => {
 
     Object.entries(files).forEach((key, value) => {
       console.log(key, value)
@@ -64,13 +137,25 @@ export function UploadCourse2() {
       const imageRef = ref(storage, `images/${file.name}`)
       uploadBytes(imageRef, file).then((res) => getDownloadURL(res.ref)).then((err) => {
         if (files.length - 1 === imagesLink.length) {
-          imagesLink.push(err);
+          imagesLink.push({
+            name: file.name,
+            path: err
+          });
 
           const callDB = async () => {
             try {
-              const response = await uploadCourse(courseObject, imagesLink);
+              var response=null;
+              if(currentCourseId=='abcdef'){
+                response = await uploadCourse(courseObject, imagesLink);
+              }else{
+                response = await updateCourse(courseObject,imagesLink,currentCourseId)
+              }
+              
               if (response) {
                 setOpen(false);
+                setCourseObject(preVData => ({
+                  ...preVData, courseName: '', courseDescription: '', lastDayToEnroll: '', duration: '', seatsLeft: '', notes: [], instructorName: ''
+                }))
                 setFlag(false)
                 setSnackbarMessage('Course Uploaded Successfully');
                 setSnackbarSeverity('success');
@@ -86,7 +171,12 @@ export function UploadCourse2() {
           }
           callDB()
 
-        } else { imagesLink.push(err) }
+        } else {
+          imagesLink.push({
+            name: file.name,
+            path: err
+          });
+        }
       })
 
     }
@@ -101,7 +191,7 @@ export function UploadCourse2() {
   const onAlertClose = () => {
     setSnackbar(false)
   }
-  const uploadCourseToDatabase = () => {
+  const uploadCourseToDatabase = async () => {
     setOpen(true);
     if (courseObject.courseName.length < 1 ||
       courseObject.courseDescription.length < 1 ||
@@ -129,7 +219,11 @@ export function UploadCourse2() {
       setOpen(false)
       return;
     }
-    uploadImage()
+    console.log(files)
+    //await checkIfFileExists(files)
+    console.log("mama",files.filter(e=>e.path==null))
+    //setFiles(files.filter(e=>e.path==null))
+    uploadImage(files.filter(e=>e.path==null))
   }
   const changeCourseName = (event) => {
     setCourseObject(prevObj => ({
@@ -162,13 +256,35 @@ export function UploadCourse2() {
     }))
   }
   const getFile = (event) => {
-    setFiles(Object.values(event.target.files));
+    var oldFiles = [...files];
+    var newFiles = Object.values(event.target.files);
+    console.log(oldFiles, newFiles.length);
+    if(oldFiles.length==0){
+      setFiles(newFiles)
+    }else{
+      var map = new Map()
+      newFiles.forEach(e=>map.set(e.name,1))
+     // console.log(oldFiles)
+     console.log(map)
+      var finalArray=oldFiles.filter(e=>!map.has(e.name))
+      console.log(oldFiles,finalArray)
+      setFiles(newFiles.concat(finalArray))
+    }
+    // var newArray=oldFiles.concat(Object.values(event.target.files))
+    // setFiles(newArray);
     // const newFile=[...file.data]
     // console.log("himanshu",event.target.files[0])
     // newFile.push(event.target.files[0].name)
     // setFile(prevData=>({
     //   ...prevData,data:newFile}))
     //   console.log(file.data)
+  }
+
+  const deleteFileFromDB = async (fileId) => {
+    if (currentCourseId != 'abcdef') {
+      var response = await deleteFileById(currentCourseId, fileId);
+      console.log(response)
+    }
   }
   return (
 
@@ -188,15 +304,33 @@ export function UploadCourse2() {
           >
             <CircularProgress color="inherit" />
           </Backdrop>
+          <Box sx={{ width: 200, marginLeft: '30px' }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Courses</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={course}
+                label="Age"
+                onChange={handleChange}
+              >
+                {courses.map(e => <MenuItem onClick={() => getCourseDetails(e.c_id)} value={e.c_id}>{e.name}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Box>
           <div className="originForCourseUpload2">
             <div className="mainTf">
               <h2 className="CourseDetails">Course Details</h2>
+
+
+
+
               <div className="tfRow1">
                 <TextField
                   id="outlined-basic"
                   className="textFiled"
                   label="CourseName"
-                  defaultValue={courseObject.courseName}
+                  value={courseObject.courseName}
                   onChange={changeCourseName}
                   variant="outlined"
                   sx={{ width: "15rem" }}
@@ -204,7 +338,7 @@ export function UploadCourse2() {
                 <TextField
                   id="outlined-basic"
                   onChange={changeInstructorName}
-                  defaultValue={courseObject.instructorName}
+                  value={courseObject.instructorName}
                   className="textFiled"
                   label="InstrctorName"
                   variant="outlined"
@@ -226,7 +360,8 @@ export function UploadCourse2() {
                 <TextField
                   id="outlined-basic"
                   onChange={changeDuration}
-                  defaultValue={courseObject.duration}
+                  value={courseObject.duration}
+                  type="number"
                   className="textFiled"
                   label="Duration"
                   variant="outlined"
@@ -238,7 +373,7 @@ export function UploadCourse2() {
                   id="outlined-basic"
                   onChange={changeCourseDescription}
                   label="Course Description"
-                  defaultValue={courseObject.courseDescription}
+                  value={courseObject.courseDescription}
                   className="textFiled"
                   multiline
                   maxRows={4}
@@ -260,13 +395,13 @@ export function UploadCourse2() {
 
                 </input>
                 <label style={{ border: '1px solid rgb(0,0,0,0.5', padding: '10px 10px 10px 10px', cursor: 'pointer' }} for="img">Click me to upload image</label>
-               
+
               </div>
-              <div style={{display:'flex',width:'100%',justifyContent:'center',alignItems:'center',flexWrap:'wrap'}}>
-                  {
-                    files.map(v => <div style={{border:'1px solid rgb(0,0,0,0.5)',marginRight:'10px',cursor:'pointer',padding:'4px 4px 4px 4px'}} key={v.name}  onClick={() => { setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
-                  }
-                </div>
+              <div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                {
+                  files.map(v => <div style={{ border: '1px solid rgb(0,0,0,0.5)', marginRight: '10px', cursor: 'pointer', padding: '4px 4px 4px 4px' }} key={v.name} onClick={() => { if(v.path!=null&&v.name!=null)deleteFileFromDB(v.path + "~" + v.name); setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
+                }
+              </div>
               <div className="tfRow4">
                 <Buttons
                   variant="contained"

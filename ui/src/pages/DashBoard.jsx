@@ -16,12 +16,12 @@ function DashBoard() {
     const dbCall = async () => {
       var response = await getDashboardData();
       console.log("statr")
-      d3.range(response.length).map((item, idx) => ({
-        date: idx,
-        value: value === null || value === undefined ? Math.random() * 100 : value
-      }));
+      // d3.range(response.length).map((item, idx) => ({
+      //   date: idx,
+      //   value: value === null || value === undefined ? Math.random() * 100 : value
+      // }));
   
-      setVisualData(response)
+      // setVisualData(response)
     }
     dbCall();
   },[])

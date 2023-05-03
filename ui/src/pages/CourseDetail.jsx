@@ -25,7 +25,6 @@ export function CourseDetail() {
     setSnackbar(false)
   }
   const handleEnrollment = async () => {
-    console.log(myState.coursesEnrolled)
     try {
       var courseResponse = await enrollInTheCourse(location.state.id);
       if (courseResponse) {
@@ -36,9 +35,7 @@ export function CourseDetail() {
           value: location.state.id
         })
       }
-      console.log(courseResponse)
     } catch (err) {
-      console.log(err)
       alert("Course Can't be Registered")
     }
   }

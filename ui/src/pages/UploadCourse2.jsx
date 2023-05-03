@@ -67,7 +67,6 @@ export function UploadCourse2() {
           seatsLeft: ''
         })
         setCourses(response)
-        // console.log("split",response.notes.split(","))
         setFiles(response.notes.split(","))
       } catch (err) {
         console.log("err", err)
@@ -130,7 +129,7 @@ export function UploadCourse2() {
   const [value, setValue] = React.useState(dayjs('2023-05-01'));
   const uploadImage = async (files) => {
 
-   
+
     for (const [key, file] of Object.entries(files)) {
       const imageRef = ref(storage, `images/${file.name}`)
       uploadBytes(imageRef, file).then((res) => getDownloadURL(res.ref)).then((err) => {
@@ -142,13 +141,13 @@ export function UploadCourse2() {
 
           const callDB = async () => {
             try {
-              var response=null;
-              if(currentCourseId=='abcdef'){
+              var response = null;
+              if (currentCourseId == 'abcdef') {
                 response = await uploadCourse(courseObject, imagesLink);
-              }else{
-                response = await updateCourse(courseObject,imagesLink,currentCourseId)
+              } else {
+                response = await updateCourse(courseObject, imagesLink, currentCourseId)
               }
-              
+
               if (response) {
                 setOpen(false);
                 setCourseObject(preVData => ({
@@ -217,11 +216,8 @@ export function UploadCourse2() {
       setOpen(false)
       return;
     }
-    console.log(files)
-    //await checkIfFileExists(files)
-    console.log("mama",files.filter(e=>e.path==null))
-    //setFiles(files.filter(e=>e.path==null))
-    uploadImage(files.filter(e=>e.path==null))
+
+    uploadImage(files.filter(e => e.path == null))
   }
   const changeCourseName = (event) => {
     setCourseObject(prevObj => ({
@@ -257,15 +253,15 @@ export function UploadCourse2() {
     var oldFiles = [...files];
     var newFiles = Object.values(event.target.files);
     console.log(oldFiles, newFiles.length);
-    if(oldFiles.length==0){
+    if (oldFiles.length == 0) {
       setFiles(newFiles)
-    }else{
+    } else {
       var map = new Map()
-      newFiles.forEach(e=>map.set(e.name,1))
-     // console.log(oldFiles)
-     console.log(map)
-      var finalArray=oldFiles.filter(e=>!map.has(e.name))
-      console.log(oldFiles,finalArray)
+      newFiles.forEach(e => map.set(e.name, 1))
+      // console.log(oldFiles)
+      console.log(map)
+      var finalArray = oldFiles.filter(e => !map.has(e.name))
+      console.log(oldFiles, finalArray)
       setFiles(newFiles.concat(finalArray))
     }
     // var newArray=oldFiles.concat(Object.values(event.target.files))
@@ -397,7 +393,7 @@ export function UploadCourse2() {
               </div>
               <div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
                 {
-                  files.map(v => <div style={{ border: '1px solid rgb(0,0,0,0.5)', marginRight: '10px', cursor: 'pointer', padding: '4px 4px 4px 4px' }} key={v.name} onClick={() => { if(v.path!=null&&v.name!=null)deleteFileFromDB(v.path + "~" + v.name); setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
+                  files.map(v => <div style={{ border: '1px solid rgb(0,0,0,0.5)', marginRight: '10px', cursor: 'pointer', padding: '4px 4px 4px 4px' }} key={v.name} onClick={() => { if (v.path != null && v.name != null) deleteFileFromDB(v.path + "~" + v.name); setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
                 }
               </div>
               <div className="tfRow4">

@@ -20,6 +20,7 @@ export const StudentPage = () => {
     const myState = useSelector(state => state.CourseReducer)
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [choice, setChoice] = useState('Available Courses');
     const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
     const [myCoursesList, setmyCoursesList] = useState({ data: [] })
     const [coursesList, setCoursesList] = useState({
@@ -32,10 +33,8 @@ export const StudentPage = () => {
         logOut: null,
     })
     useEffect(() => {
-        console.log("user details hai bhai ye",myState.userDetails)
         const dbCall = async () => {
             var availableCoursesData = await getAllCourses();
-            console.log("available courses", availableCoursesData)
             var myCoursesData = await getMyCourses(myState.userDetails.email);
             setCoursesList(prevData => ({
                 ...prevData, data: availableCoursesData
@@ -47,9 +46,9 @@ export const StudentPage = () => {
                 ...prevData, data: availableCoursesData
             }))
             dispatch({
-                type:'updateStudentCourses',
-                value:{
-                   myCourses:myCoursesData
+                type: 'updateStudentCourses',
+                value: {
+                    myCourses: myCoursesData
 
                 }
             })
@@ -57,10 +56,8 @@ export const StudentPage = () => {
         dbCall()
     }, [])
 
-    const [choice, setChoice] = useState('Available Courses');
-    const changeFilterValue = (event) => {
-        // setFilter(event.target.value);
-    }
+    
+
     const changeChoice = async (choice) => {
         setBorder(prevBorder => ({
             ...prevBorder, availableCourses: null, myCourses: null,
@@ -68,7 +65,8 @@ export const StudentPage = () => {
             logOut: null,
         }))
         switch (choice) {
-            case 'My Courses': setChoice('My Courses');
+            case 'My Courses':
+                setChoice('My Courses');
                 setCoursesList(prevData => ({
                     ...prevData, data: myCoursesList.data
                 }))
@@ -84,16 +82,18 @@ export const StudentPage = () => {
                     ...prevBorder, availableCourses: '2px solid #fff'
                 }))
                 setChoice('Available Courses'); break;
-            case 'My Profile': setChoice('My Profile');
+            case 'My Profile':
+                setChoice('My Profile');
                 setBorder(prevBorder => ({
                     ...prevBorder, myProfile: '2px solid #fff'
                 }))
                 break;
-            case 'Logout': setChoice('Logout');
-             dispatch({
-                type:'removeToken'
-            })
-            navigate("/");
+            case 'Logout':
+                setChoice('Logout');
+                dispatch({
+                    type: 'removeToken'
+                })
+                navigate("/");
                 setBorder(prevBorder => ({
                     ...prevBorder, logOut: '2px solid #fff'
                 }))
@@ -146,7 +146,7 @@ export const StudentPage = () => {
                 </div>
             </div>
             <div className="body">
-                
+
                 <div className="course-grid">
                     {
                         choice === 'My Profile' ? <MyProfile /> :

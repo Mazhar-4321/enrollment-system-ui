@@ -73,7 +73,7 @@ export const Course = (props) => {
             </Snackbar>
             <div onClick={handleChange} style={{ cursor: 'pointer' }} className="card">
                 <div className="card-image" >
-                    <img className="card-image-display" src={'https://www.shutterstock.com/image-vector/open-book-vector-clipart-silhouette-260nw-795305758.jpg'} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
+                    <img className="card-image-display" src={'https://firebasestorage.googleapis.com/v0/b/facctum-3b872.appspot.com/o/images%2FmyImage.png?alt=media&token=580ad454-c63d-42b3-a055-2f80ef11d808'} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
                     {!props.isStudent && <IconButton style={{ position: 'abslute', top: '-80px', right: '-50px', background: 'black', color: 'white' }}>
                         <CloseIcon />
                     </IconButton>

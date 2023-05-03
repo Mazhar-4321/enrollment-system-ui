@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import ApproveCourseCertificateRequest from '../components/ApproveCourseCertificateRequest';
 import DashBoard from './DashBoard';
-import { getDashboardData } from '../services/AdminService';
 
 
 
@@ -20,9 +19,6 @@ export default function LabTabs() {
   const [visualData, setVisualData] = React.useState([])
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  React.useEffect(() => {
-    
-  }, [])
   const handleChange = (event, newValue) => {
     if (newValue == 5) {
       dispatch({

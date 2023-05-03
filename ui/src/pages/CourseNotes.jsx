@@ -37,73 +37,25 @@ export const CourseNotes = () => {
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-const [snackbar,setSnackbar]=useState(false)
-const [snackbarMessage,setSnackbarMessage]=useState('')
-const [snackbarSeverity,setSnackbarSeverity]=useState('')
-    let grade='A';
-    const [availableCoursesList, setAvailableCoursesList] = useState({ data: [] })
+    const [choice, setChoice] = useState('Notes');
+    const [snackbar, setSnackbar] = useState(false)
+    const [snackbarMessage, setSnackbarMessage] = useState('')
+    const [snackbarSeverity, setSnackbarSeverity] = useState('')
+    let grade = 'A';
     const [myCoursesList, setmyCoursesList] = useState({ data: [] })
     const [quiz, setQuiz] = useState([])
-    const [coursesList, setCoursesList] = useState({
-        data: []
-    })
     const [border, setBorder] = useState({
         notes: '2px solid #fff',
         takeQuiz: null,
         cancelCourse: null,
         claimCertificate: null,
     })
-    useEffect(() => {
-
-        const dbCall = async () => {
-            const quizResponse = await getQuiz(location.state.id);
-            console.log("quiz Response", quizResponse)
-            setQuiz(quizResponse)
-            console.log(myState.coursesEnrolled.get(location.state.id).notes.split(","))
-            setmyCoursesList(prevData => (
-                {
-                    ...prevData, data: myState.coursesEnrolled.get(location.state.id).notes.split(",")
-                }
-            ))
-            //    setmyCoursesList(prevData=>(
-            //     {...prevData,data:myState.coursesEnrolled.get(location.state.id).notes.split(","))})
-            // var availableCoursesData = await getAllCourses();
-
-            // console.log("available courses", availableCoursesData)
-            // var myCoursesData = await getMyCourses(myState.userDetails.email);
-            // setCoursesList(prevData => ({
-            //     ...prevData, data: availableCoursesData
-            // }))
-            // setmyCoursesList(prevData => ({
-            //     ...prevData, data: myCoursesData
-            // }))
-            // setAvailableCoursesList(prevData => ({
-            //     ...prevData, data: availableCoursesData
-            // }))
-            // dispatch({
-            //     type:'updateStudentCourses',
-            //     value:{
-            //        myCourses:myCoursesData
-
-            //     }
-            // })
-        }
-        dbCall()
-    }, [])
-    const playBackdrop = () => {
-
-    }
-    const [choice, setChoice] = useState('Notes');
-    const changeFilterValue = (event) => {
-        // setFilter(event.target.value);
-    }
     const changeChoice = async (choice) => {
         setBorder(prevBorder => ({
             ...prevBorder, notes: null, takeQuiz: null,
             cancelCourse: null,
             claimCertificate: null,
         }))
-        console.log(location.state)
         switch (choice) {
             case 'Notes':
                 setChoice('Notes');
@@ -119,12 +71,11 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                 setChoice('Take Quiz'); break;
             case 'Cancel Course':
                 setChoice('Cancel Course');
-                var cancelCourse1= await cancelCourse(location.state.id);
-                console.log("cancellll",cancelCourse1)
-                if(cancelCourse1){
+                var cancelCourse1 = await cancelCourse(location.state.id);
+                if (cancelCourse1) {
                     dispatch({
-                        type:'delteCourse',
-                        value:location.state.id
+                        type: 'delteCourse',
+                        value: location.state.id
                     })
                     navigate("/StudentPage");
                 }
@@ -134,49 +85,41 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                 break;
             case 'Claim Certificate':
                 setChoice('Claim Certificate');
-                var getMarks=await getHighestMarks(location.state.id);
-                console.log("got marks",getMarks)
-                if(getMarks=='Fail'){
-                   setSnackbar(true);
-                   setSnackbarMessage("Certificate Can't be downloaded")
-                   setSnackbarSeverity("error");
-                   return
-                }
-                if(getMarks=='Success'){
-                    console.log("Pass",getMarks[0].max-1);
-                    if(getMarks[0]>8){
-                        grade='A'
-                    }
-                    if(getMarks[0]>7&&getMarks[0]<=8){
-                        grade='B'
-                    }
-                    if(getMarks[0]>6&&getMarks[0]<=7){
-                        grade='C'
-                    }
-                    if(getMarks[0]<6){
-                        grade='D'
-                    }
-                    var element = document.getElementById('domEl');
-                    element.style.display='block'
-                   // html2pdf(element)
-                   var opt = {
-                    margin:       0,
-                    filename:     `${myState.userDetails.firstName}`,
-                    image:        { type: 'jpeg', quality: 1 },
-                    html2canvas:  { scale: 2 },
-                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-                  };
-                    html2pdf().set(opt).from(element).save()
-                    setTimeout(()=>{
-                        element.style.display='none'
-                    },10) 
-                }else{
-                    setSnackbar(true);
-                    setSnackbarMessage("Minimum 80% Required To Download Certificate")
-                    setSnackbarSeverity("error");
+                var getMarks = await getHighestMarks(location.state.id);
+                if (getMarks == 'Fail') {
+                    prepareSnackbar("Certificate Can't be downloaded","error")
                     return
                 }
-                console.log("ress",getMarks)
+                if (getMarks == 'Success') {
+                    if (getMarks[0] > 8) {
+                        grade = 'A'
+                    }
+                    if (getMarks[0] > 7 && getMarks[0] <= 8) {
+                        grade = 'B'
+                    }
+                    if (getMarks[0] > 6 && getMarks[0] <= 7) {
+                        grade = 'C'
+                    }
+                    if (getMarks[0] < 6) {
+                        grade = 'D'
+                    }
+                    var element = document.getElementById('domEl');
+                    element.style.display = 'block'
+                    var opt = {
+                        margin: 0,
+                        filename: `${myState.userDetails.firstName}`,
+                        image: { type: 'jpeg', quality: 1 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                    };
+                    html2pdf().set(opt).from(element).save()
+                    setTimeout(() => {
+                        element.style.display = 'none'
+                    }, 10)
+                } else {
+                    prepareSnackbar("Minimum 80% Required To Download Certificate","error");
+                    return
+                }
                 setBorder(prevBorder => ({
                     ...prevBorder, claimCertificate: '2px solid #fff'
                 }))
@@ -184,10 +127,28 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
 
         }
     }
+    const prepareSnackbar=(message,severity)=>{
+        setSnackbar(true);
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity)
+    }
+    useEffect(() => {
+        const dbCall = async () => {
+            const quizResponse = await getQuiz(location.state.id);
+            setQuiz(quizResponse)
+            setmyCoursesList(prevData => (
+                {
+                    ...prevData, data: myState.coursesEnrolled.get(location.state.id).notes.split(",")
+                }
+            ))
+        }
+        dbCall()
+    }, [])
+
     return (
 
         <div className="main-container">
-             <Snackbar open={snackbar} onClose={() => setSnackbar(false)} autoHideDuration={1000} >
+            <Snackbar open={snackbar} onClose={() => setSnackbar(false)} autoHideDuration={1000} >
                 <Alert severity={snackbarSeverity} sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>
@@ -259,14 +220,14 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                     : choice == 'Take Quiz' ?
                         <TakeQuiz courseId={location.state.id} quiz={quiz} />
                         : choice == 'Claim Certificate' ?
-                        <div id="domEl" style={{display:'none',width:'100vw',height:'1050px'}}>
-                        <img style={{ width: '850px', height: '1050px' }} src={Certificate} />
-                        <div style={{ top: '480px', left: '300px', position: 'absolute' }}>{myState.userDetails.firstName} {myState.userDetails.lastName}</div>
-                        <div style={{ top: '680px', left: '300px', position: 'absolute' }}>{location.state.courseName}</div>
-                        <div style={{ top: '770px', left: '300px', fontSize: '8px', position: 'absolute' }}>{new Date().getDate()+"-"+new Date().getMonth()+"-"+new Date().getFullYear()}</div>
-                        <div style={{ top: '860px', left: '550px', position: 'absolute' }}>Grade:{grade}</div>
-                        <img style={{ top: '750px', left: '600px', fontSize: '8px', position: 'absolute' }} src={Image1} />
-                    </div>
+                            <div id="domEl" style={{ display: 'none', width: '100vw', height: '1050px' }}>
+                                <img style={{ width: '850px', height: '1050px' }} src={Certificate} />
+                                <div style={{ top: '480px', left: '300px', position: 'absolute' }}>{myState.userDetails.firstName} {myState.userDetails.lastName}</div>
+                                <div style={{ top: '680px', left: '300px', position: 'absolute' }}>{location.state.courseName}</div>
+                                <div style={{ top: '770px', left: '300px', fontSize: '8px', position: 'absolute' }}>{new Date().getDate() + "-" + new Date().getMonth() + "-" + new Date().getFullYear()}</div>
+                                <div style={{ top: '860px', left: '550px', position: 'absolute' }}>Grade:{grade}</div>
+                                <img style={{ top: '750px', left: '600px', fontSize: '8px', position: 'absolute' }} src={Image1} />
+                            </div>
                             :
                             <div>Cancel Course</div>
 

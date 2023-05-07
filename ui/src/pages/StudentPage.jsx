@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCourses, getMyCourses } from "../services/StudentService";
+import imj from "../images/online-education.png"
+import { GiBookshelf } from 'react-icons/gi';
 
 export const StudentPage = () => {
     const myState = useSelector(state => state.CourseReducer)
@@ -101,13 +103,15 @@ export const StudentPage = () => {
 
         }
     }
+
+ 
     return (
 
         <div className="main-container">
             <div className="header">
-                <div className="icon">
-                    <AssignmentIcon />
-                    <div>Class Enrollment System</div>
+                <div  className="icon">
+                <img  src={imj} style={{ marginBottom : "0.5rem" ,height : "35px",width : "35px"}} />
+                    <div><h4> Class Enrollment System</h4></div>
                 </div>
                 <div className="search-bar">
                     <Paper
@@ -128,19 +132,20 @@ export const StudentPage = () => {
                 </div>
                 <div className="user-activities">
                     <div style={{ border: border.availableCourses, cursor: 'pointer' }} onClick={() => changeChoice('Available Courses')} className="icon-value">
-                        <AccountBalanceIcon />
+                        <AccountBalanceIcon  fontSize="large"  />
+                     
                         <div>Available Courses</div>
                     </div>
                     <div style={{ border: border.myCourses, cursor: 'pointer' }} onClick={() => changeChoice('My Courses')} className="icon-value">
-                        <SchoolIcon />
+                        <SchoolIcon fontSize="large"  />
                         <div>My Courses</div>
                     </div>
                     <div style={{ border: border.myProfile, cursor: 'pointer' }} onClick={() => changeChoice('My Profile')} className="icon-value">
-                        <PersonOutlineIcon />
+                        <PersonOutlineIcon fontSize="large" />
                         <div>My Profile</div>
                     </div>
                     <div style={{ border: border.logOut, cursor: 'pointer' }} onClick={() => changeChoice('Logout')} className="icon-value">
-                        <LogoutIcon />
+                        <LogoutIcon fontSize="large"  />
                         <div>Logout</div>
                     </div>
                 </div>

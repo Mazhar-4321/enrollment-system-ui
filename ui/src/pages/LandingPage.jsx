@@ -14,9 +14,11 @@ import Select from "@mui/material/Select";
 import { registerUser, reset } from "../services/UserService";
 import { validateEmail, login } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { useDispatch, useSelector } from "react-redux";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css"; // optional
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const passwordRegex =
@@ -60,14 +62,13 @@ const style3 = {
   p: 4,
 };
 
-
 export const LandingPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const myState = useSelector(state => state.CourseReducer)
-  const [snackbar, setSnackbar] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState('')
-  const [snackbarSeverity, setSnackbarSeverity] = useState('')
+  const myState = useSelector((state) => state.CourseReducer);
+  const [snackbar, setSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("");
   const [view, setView] = useState(true);
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -81,11 +82,18 @@ export const LandingPage = () => {
   const [userType, setUserType] = React.useState("");
 
   const handleOpen2 = async () => {
-    const data = {
-      email: signInObject.email,
-    };
-    await validateEmail(data)
-    setOpen2(true);
+    if (signInObject.email.length > 0 && !signInRegex.email.error) {
+      const data = {
+        email: signInObject.email,
+      };
+      await validateEmail(data);
+      setOpen2(true);
+      setOpen3(false);
+    } else {
+      setSnackbar(true);
+      setSnackbarMessage("Please Enter Correct Email");
+      setSnackbarSeverity("error");
+    }
   };
 
   const handleOpen3 = () => setOpen3(true);
@@ -94,44 +102,40 @@ export const LandingPage = () => {
 
   const [loginDisable, setLoginDisable] = useState(true);
 
+  const [ProceedDisable, setProceedDisable] = useState(true);
+
+
   const [emailLoginDisable, setEmailLoginDisable] = useState("");
 
   const handleLogin = async () => {
     if (myState.token != null) {
-      return
+      return;
     }
     try {
-      var loginResponse = await login(signInObject)
-      console.log("lklklk", loginResponse.data.data.split(",")[0])
-      if (loginResponse.data.data.split(",")[0] == 'null') {
+      var loginResponse = await login(signInObject);
+      console.log("lklklk", loginResponse.data.data.split(",")[0]);
+      if (loginResponse.data.data.split(",")[0] == "null") {
         setSnackbar(true);
-        setSnackbarMessage('Your Admin Privilige is Blocked');
-        setSnackbarSeverity('error');
-        return
+        setSnackbarMessage("Your Admin Privilige is Blocked");
+        setSnackbarSeverity("error");
+        return;
       }
       if (loginResponse) {
         dispatch({
-          type: 'updateToken',
-          value: loginResponse.data.data
-        })
-        if (loginResponse.data.data.split(",")[0] == 'admin') {
-          navigate('/AdminPage')
+          type: "updateToken",
+          value: loginResponse.data.data,
+        });
+        if (loginResponse.data.data.split(",")[0] == "admin") {
+          navigate("/AdminPage");
         } else {
-
-
-          navigate("/StudentPage")
+          navigate("/StudentPage");
         }
       }
-
-
-
-    }
-
-    catch (err) {
-      console.log(err)
-      setSnackbar(true)
-      setSnackbarMessage('Invalid Username Or Password')
-      setSnackbarSeverity('error')
+    } catch (err) {
+      console.log(err);
+      setSnackbar(true);
+      setSnackbarMessage("Invalid Username Or Password");
+      setSnackbarSeverity("error");
     }
   };
 
@@ -140,15 +144,31 @@ export const LandingPage = () => {
   };
 
   const handleOpenForProceed = async () => {
-    setOpenForProceed(true);
-    const data = {
-      email: signUpObject.email,
-    };
-    const response = await validateEmail(data);
+    if (
+      (signUpObject.firstName > 0,
+      signUpObject.lastName > 0,
+      signUpObject.email > 0,
+      signUpObject.password > 0,
+      userType > 0 && !signUpRegex.email,
+      !signUpRegex.firstName,
+      !signUpRegex.lastName,
+      !signUpRegex.password)
+    ) {
+      
+      setOpenForProceed(true);
+      const data = {
+        email: signUpObject.email,
+      };
+      const response = await validateEmail(data);
+    } else {
+      setSnackbar(true);
+      setSnackbarMessage("Please Enter Valid Details");
+      setSnackbarSeverity("error");
+    }
   };
 
   const handleOtp = async () => {
-    alert(userType)
+    alert(userType);
     const data2 = {
       firstName: signUpObject.firstName,
       lastName: signUpObject.lastName,
@@ -161,13 +181,13 @@ export const LandingPage = () => {
       const response = await registerUser(data2);
       if (response) {
         setSnackbar(true);
-        setSnackbarMessage("Registration Success")
-        setSnackbarSeverity('success')
+        setSnackbarMessage("Registration Success");
+        setSnackbarSeverity("success");
       }
     } catch (err) {
       setSnackbar(true);
-      setSnackbarMessage("Registration Failed")
-      setSnackbarSeverity('error')
+      setSnackbarMessage("Registration Failed");
+      setSnackbarSeverity("error");
     }
   };
 
@@ -216,7 +236,6 @@ export const LandingPage = () => {
       email: event.target.value,
     }));
 
-
     var email = event.target.value;
     if (!email.match(emailRegex)) {
       setSignInRegex((previousState) => ({
@@ -243,26 +262,27 @@ export const LandingPage = () => {
       var response = await reset({
         otp: OTP,
         password: signInObject.password,
-        email: signInObject.email
-      })
+        email: signInObject.email,
+      });
       if (response) {
         setSnackbar(true);
-        setSnackbarMessage('Password Reset Successfully');
-        setSnackbarSeverity('success')
+        setSnackbarMessage("Password Reset Successfully");
+        setSnackbarSeverity("success");
+        setOpen2(false)
+
       }
     } catch (err) {
       setSnackbar(true);
-      setSnackbarMessage('Error Resetting Password');
-      setSnackbarSeverity('error')
+      setSnackbarMessage("Error Resetting Password");
+      setSnackbarSeverity("error");
     }
-  }
+  };
 
   const changeEmailSignup = (event) => {
     setSignUpObjet((prevObj) => ({
       ...prevObj,
       email: event.target.value,
     }));
-
 
     var email = event.target.value;
 
@@ -331,6 +351,7 @@ export const LandingPage = () => {
         },
       }));
     } else {
+      setProceedDisable(false)
       if (emailLoginDisable) {
         setLoginDisable(false);
       }
@@ -400,16 +421,24 @@ export const LandingPage = () => {
   };
 
   const onSnackbarClose = () => {
-    setSnackbar(false)
-  }
+    setSnackbar(false);
+  };
   const onAlertClose = () => {
-    setSnackbar(false)
-  }
+    setSnackbar(false);
+  };
 
   return (
     <div>
-      <Snackbar open={snackbar} autoHideDuration={6000} onClose={onSnackbarClose}>
-        <Alert onClose={onAlertClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+      <Snackbar
+        open={snackbar}
+        autoHideDuration={6000}
+        onClose={onSnackbarClose}
+      >
+        <Alert
+          onClose={onAlertClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
@@ -442,19 +471,29 @@ export const LandingPage = () => {
                     label="Email id"
                     variant="outlined"
                   />
-                  <TextField
-                    error={signInRegex.password.error}
-                    type="password"
-                    onInput={changePassword}
-                    helperText={signInRegex.password.helperText}
-                    id="outlined-basic"
-                    size="small"
-                    fullWidth
-                    label="Password"
-                    variant="outlined"
-                  />
+                  <Tippy
+                    content={
+                      <span>
+                        Password Should have atleast one special
+                        character,number,uppercase letter and minimum 8
+                        character
+                      </span>
+                    }
+                  >
+                    <TextField
+                      error={signInRegex.password.error}
+                      type="password"
+                      onInput={changePassword}
+                      helperText={signInRegex.password.helperText}
+                      id="outlined-basic"
+                      size="small"
+                      fullWidth
+                      label="Password"
+                      variant="outlined"
+                    />
+                  </Tippy>
                   <div
-                    className="forgetpassbutton"
+                   
                     style={{
                       display: "flex",
                       width: "100%",
@@ -463,9 +502,10 @@ export const LandingPage = () => {
                       marginTop: "-20px",
                       cursor: "pointer",
                     }}
-                    onClick={handleOpen3}
+               
                   >
-                    <p>Forgot Password?</p>
+                    <p  className="forgotpassbutton"
+                    onClick={handleOpen3}>Forgot Password?</p>
                   </div>
 
                   <Modal
@@ -624,8 +664,6 @@ export const LandingPage = () => {
             <div className="Box3">
               <div className="SignUp">
                 <div
-
-
                   style={{
                     display: "flex",
                     rowGap: "1rem",
@@ -633,7 +671,6 @@ export const LandingPage = () => {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-
                   }}
                 >
                   <h2 className="Projectname">Class Enrollment System</h2>
@@ -645,7 +682,7 @@ export const LandingPage = () => {
                       justifyContent: "center",
                       alignItems: "center",
                       rowGap: "0.5rem",
-                      height: "50%"
+                      height: "50%",
                     }}
                   >
                     <TextField
@@ -720,12 +757,9 @@ export const LandingPage = () => {
                     </FormControl>
 
                     <Button
+                    disabled = {ProceedDisable}
                       onClick={handleOpenForProceed}
                       fullWidth
-                      style={{
-                        background: "#1C266E",
-                        textTransform: "none",
-                      }}
                       variant="contained"
                     >
                       Proceed

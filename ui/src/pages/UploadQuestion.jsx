@@ -18,6 +18,7 @@ import {
 import { addQuiz, getMyCourses } from "../services/AdminService";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Pulse from 'react-reveal/Pulse';
 let questionsMap = new Map();
 
 
@@ -149,7 +150,10 @@ const QuestionForm = () => {
   }
   return (
     <div>
-      <p style={{ fontSize: '25px', marginLeft: '200px' }}>{count} Question/s Added To List</p>
+      <div className="originUploadQuestion">
+      <Pulse>
+        <div className="uploadQuestionMainBox">
+      <h2 style={{ fontSize: '25px', marginLeft: '200px',color: "#1c266e"}}>{count} Question/s Added To List</h2>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -268,6 +272,9 @@ const QuestionForm = () => {
             </div>
           </div>
         </div>
+      </div>
+      </div>
+      </Pulse>
       </div>
     </div>
   );

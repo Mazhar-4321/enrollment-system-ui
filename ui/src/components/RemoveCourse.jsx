@@ -3,6 +3,8 @@ import { deleteCourse, getMyCourses } from "../services/AdminService";
 import Grid from '@mui/material/Grid';
 import { IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import "../css/RemoveCourse.css"
+import Flip from 'react-reveal/Flip';
 
 
 export const RemoveCourse = () => {
@@ -34,17 +36,19 @@ export const RemoveCourse = () => {
     }
     return (
         <div>
+            <div className="originRemoveCourse">
             <Grid container spacing={2}>
 
                 {
                     courses.map(e => {
                         return (
-                            <Grid item xs={3}>
-                                <div style={{ cursor: 'pointer' }} className="card">
+                            <Grid  sx={{marginLeft : "50px"}} item xs={2.4}>
+                                        <Flip left>
+                                <div style={{ cursor: 'pointer' , backgroundColor : " #F2F5F5" }} className="card" >
                                     <div className="card-image" >
                                         <img className="card-image-display" src={'https://www.shutterstock.com/image-vector/open-book-vector-clipart-silhouette-260nw-795305758.jpg'} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
-                                        <IconButton style={{ position: 'abslute', top: '-80px', right: '-50px', background: 'black', color: 'white' }}>
-                                            <CloseIcon onClick={() => deleteCourses(e.c_id)} />
+                                        <IconButton className="cancelMark">
+                                            <CloseIcon className="mark" onClick={() => deleteCourses(e.c_id)} />
                                         </IconButton>
 
                                     </div>
@@ -61,11 +65,13 @@ export const RemoveCourse = () => {
                                         <div style={{ marginTop: '5px', }}><span style={{ fontSize: '12px' }}>Seats Left:{e.seatsLeft} </span></div>
                                     </div>
                                 </div>
+                                </Flip>
                             </Grid>
                         )
                     })
                 }
             </Grid>
+            </div>
         </div>
     )
 }

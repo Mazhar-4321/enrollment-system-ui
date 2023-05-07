@@ -1,6 +1,6 @@
 import axios from "axios";
 import store from '../store'
-const baseURL = 'http://localhost:3008/api/v1/'
+const baseURL = 'http://localhost:3005/api/v1/'
 
 
 
@@ -26,7 +26,8 @@ export const uploadCourse = async (obj, imagesLink) => {
             seatsLeft: obj.seatsLeft,
             notes: obj.notes,
             instructorName: obj.instructorName,
-            email: state.userDetails.email
+            email: state.userDetails.email,
+            courseDescription : obj.courseDescription
 
         }, {
             headers: {
@@ -94,7 +95,7 @@ export const getMyCourses = async () => {
 }
 
 export const getDashboardData = async () => {
-    console.log("get My Courses Reached")
+    console.log("IN GET DASHBOARD DATA------------->")
     const state = store.getState().CourseReducer;
     console.log(state)
     try {

@@ -1,45 +1,59 @@
 import React from "react";
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-export const MyProfile=()=>{
-    return(
-        <div className="myProfile">
-         <div className="name">
-         <TextField
-         sx={{width:'35%',margin:'20px'}}
-         fullWidth
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import "../css/MyProfile.css";
+import { useSelector } from 'react-redux';
+
+export const MyProfile = () => {
+
+  const { firstName, lastName, email } = useSelector(state => state.CourseReducer.userDetails);
+
+  return (
+    <div className="originMyProfile">
+      
+      <div className="myProfile">
+      <h2 style={{ color: " #1c266e" }}>Update Profile </h2>
+        <TextField
+          //  sx={{width:'35%',margin:'20px'}}
+          sx={{width : "80%"}}
+          fullWidth
           id="outlined-required"
           label="First Name"
-          defaultValue="Mazhar"
+          defaultValue= {firstName}
         />
         <TextField
-        sx={{width:'35%',margin:'20px'}}
-        fullWidth
+          // sx={{width:'35%',margin:'20px'}}
+          sx={{width : "80%"}}
+          fullWidth
           id="outlined-required"
           label="Last Name"
-          defaultValue="Ali"
+          defaultValue={lastName}
         />
-         </div>
-         <div className="name">
-         <TextField
-         sx={{width:'35%',margin:'20px'}}
-         fullWidth
+
+        <TextField
+          //  sx={{width:'35%',margin:'20px'}}
+          sx={{width : "80%"}}
+          fullWidth
           id="outlined-required"
           label="Email"
-          defaultValue="syedmazharali742@gmail.com"
+          defaultValue={email}
         />
+
         <TextField
-        sx={{width:'35%',margin:'20px'}}
-        fullWidth
+          // sx={{width:'35%',margin:'20px'}}
+          sx={{width : "80%"}}
+          fullWidth
           id="outlined-required"
           type="password"
           label="Password"
-          defaultValue="Ali"
+          defaultValue="TBD"
         />
-         </div>
-         <div className="submit">
-         <Button sx={{textTransform:'none'}} variant="contained">Save Changes</Button>
-         </div>
+        <div className="submit">
+          <Button sx={{ textTransform: "none" , marginBottom : "2rem" }} variant="contained">
+            Save Changes
+          </Button>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};

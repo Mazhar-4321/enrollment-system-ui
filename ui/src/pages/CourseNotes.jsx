@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import '../css/StudentPage.css';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
@@ -12,7 +11,6 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { MyProfile } from "../components/MyProfile";
 import Certificate from '../images/certificate.png';
 import Image1 from '../images/myImage.png';
-
 import html2pdf from "html-to-pdf-js";
 import { Course } from "../components/Course";
 import Grid from '@mui/material/Grid';
@@ -28,6 +26,13 @@ import MuiAlert from '@mui/material/Alert';
 import { ClaimCertificate } from "../components/ClaimCertificate";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import DescriptionIcon from '@mui/icons-material/Description';
+import QuizIcon from '@mui/icons-material/Quiz';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import CardMembershipIcon from '@mui/icons-material/CardMembership';
+import imj from "../images/online-education.png"
+import "../css/CourseNotes.css"
+import '../css/StudentPage.css';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -184,6 +189,10 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
 
         }
     }
+
+    function handlegohome () {
+        navigate ('/StudentPage')
+    } 
     return (
 
         <div className="main-container">
@@ -193,9 +202,9 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                 </Alert>
             </Snackbar>
             <div className="header">
-                <div className="icon">
-                    <AssignmentIcon />
-                    <div>Class Enrollment System</div>
+                <div onClick={handlegohome}  className="icon">
+                   <img src={imj} style={{ marginBottom : "0.5rem" ,height : "35px",width : "35px"}} />
+                    <div><h4> Class Enrollment System</h4></div>
                 </div>
                 <div className="search-bar">
                     <Paper
@@ -215,20 +224,21 @@ const [snackbarSeverity,setSnackbarSeverity]=useState('')
                     </Paper>
                 </div>
                 <div className="user-activities">
-                    <div style={{ border: border.notes, cursor: 'pointer' }} onClick={() => changeChoice('Notes')} className="icon-value">
-                        <AccountBalanceIcon />
+                    <div   onClick={() => changeChoice('Notes')} className="icon-value">
+                        {/* <AccountBalanceIcon /> */}
+                        <DescriptionIcon fontSize="large" />
                         <div>Notes</div>
                     </div>
-                    <div style={{ border: border.takeQuiz, cursor: 'pointer' }} onClick={() => changeChoice('Take Quiz')} className="icon-value">
-                        <SchoolIcon />
+                    <div  onClick={() => changeChoice('Take Quiz')} className="icon-value">
+                   <QuizIcon fontSize="large" />
                         <div>Take Quiz</div>
                     </div>
                     <div style={{ border: border.cancelCourse, cursor: 'pointer' }} onClick={() => changeChoice('Cancel Course')} className="icon-value">
-                        <PersonOutlineIcon />
+                        <BackspaceIcon fontSize="large" />
                         <div>Cancel Course</div>
                     </div>
                     <div style={{ border: border.claimCertificate, cursor: 'pointer' }} onClick={() => changeChoice('Claim Certificate')} className="icon-value">
-                        <LogoutIcon />
+                        < CardMembershipIcon fontSize="large"/>
                         <div>Claim Certificate</div>
                     </div>
                 </div>

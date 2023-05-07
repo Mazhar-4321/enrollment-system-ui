@@ -1,136 +1,109 @@
-.originForCourseDetails{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #8739F9;
-     height: 100vh;
-    width: 100vw;  
-  }
-  
-  .main-bookcontainer {
-    display: flex;
-    padding: 20px;
-    border: 1px black solid;
-    width: 80%;
-    height: 75%;
-    border-radius: 40px;
-    background-color: aliceblue;
-  
-    /* border: 2px solid red; */
-    /* border: 1px solid black;
-      width: 100vw;
-      height: 80vh;
-      margin-top: 60px;
-      margin-right: 200px; */
-  }
-  
-  .left-side {
-    width: 40vw;
-  }
-  
-  .book-button {
-      justify-content: center;
-      display: flex;
-      width: 30vw;
-  }
-  
-  .book-button button {
-    width: 95%;
-    margin: 5px;
-    height: 40px;
-    font-size: 16px;
-    color: #ffffff;
-    background-color: #5e5df0;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    border-radius: 40PX;
-  }
-  
-  .book-button button:hover {
-    background-color: #1c266e;
-    
-  }
-  
-  .right-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .title {
-    font-weight: bold;
-    font-size: 24px;
-  }
-  
-  .auther {
-    font-size: 20px;
-    color: #a38f92;
-  }
-  
-  .pricebook {
-    padding: 20px 20px 20px 0px;
-  }
-  
-  .dis-price {
-    font-size: 36px;
-    font-weight: bold;
-    display: inline-block;
-  }
-  
-  .real-price {
-    font-size: 18px;
-    display: inline-block;
-    margin-left: 10px;
-    text-decoration: line-through;
-  }
-  
-  .book-description {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  
-  .detail {
-    color: #807577;
-  }
-  
-  .descrip {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  
-  .headings {
-    display: flex;
-    margin-top: 20px;
-    font: normal normal normal 15px/30px Roboto;
-    letter-spacing: 0px;
-    /* color: #9D9D9D; */
-    opacity: 1;
-    height: 8px;
-    display: flex;
-    justify-content: center;
-    /* border: 1px solid beige; */
-    align-self: flex-start;
-  }
-  
-  .img-Book img {
-    height: 400px;
-    width: 350px;
-    padding: 10px;
-    border: 1px solid rgb(143, 131, 131);
-  }
-  
-  .left-side {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-  
-  .right-content hr {
-    height: 1px;
-    background-color: rgb(126, 112, 112);
-    border: none;
-    width: 100%;
-  }
+.originForCourseDetails {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #8739F9;
+  height: 100vh;
+  width: 100vw;
+}
+
+.main-bookcontainer {
+  display: flex;
+  width: 70vw;
+  height: 75vh;
+  border-radius: 20px;
+  background-color: #F5F5F5;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
+
+.book-button button:hover {
+  background-color: #1c266e;
+
+}
+
+.right-content {
+  /* border: 2px solid red; */
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 60%;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.auther {
+  font-size: 20px;
+  color: #a38f92;
+}
+
+.dis-price {
+  color: #a38f92;
+  font-size: 17px;
+  display: inline-block;
+}
+
+.real-price {
+  color: #a38f92;
+  font-size: 16px;
+  display: inline-block;
+}
+
+.book-description {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.detail {
+  color: #807577;
+}
+
+.descrip {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.headings {
+  display: flex;
+  margin-top: 20px;
+  font: normal normal normal 15px/30px Roboto;
+  letter-spacing: 0px;
+  opacity: 1;
+  height: 8px;
+  display: flex;
+  justify-content: center;
+  align-self: flex-start;
+}
+
+.img-Book {
+  /* border: 2px solid rgb(16, 224, 82); */
+  height: 70%;
+  width: 60%;
+  margin-top: 1rem;
+  border-radius: 10px;
+  /* border: 1px solid rgb(143, 131, 131); */
+
+}
+
+.left-side {
+  display: flex;
+  row-gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  /* border: 2px solid red; */
+    width: 40%;
+}
+
+.right-content hr {
+  height: 1px;
+  background-color: rgb(126, 112, 112);
+  border: none;
+  width: 90%;
+  margin-right: 5rem;
+}

@@ -1,13 +1,17 @@
 import React, { useState } from "react";
+import Button from '@mui/material/Button';
 import IconButton from "@mui/material/IconButton";
 import Rotate from "react-reveal/Rotate";
 import "../css/CourseDetail.css";
 import dummyimg from "../images/eour.jpeg";
+import sampleimg from "../images/71OsIaHonQL._SL1500_.jpg"
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { enrollInTheCourse } from "../services/StudentService";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Jump from 'react-reveal/Jump';
+
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
@@ -50,26 +54,33 @@ export function CourseDetail() {
         </Alert>
       </Snackbar>
       <div className="originForCourseDetails">
-        <Rotate top left>
+      <Jump>
           <div className="main-bookcontainer">
             <div className="left-side">
               <div className="img-Book">
-                <img src={dummyimg} alt="img" />
-              </div>
-              <div className="book-button">
+                <img src={sampleimg} alt="img" style={{height : "100%" , width : "100%"}} />
+                </div>
+              <Button style={{width : "60%"}} className="enrollButton" variant="contained"  disabled={enroll} onClick={handleEnrollment}>Enroll Course</Button>
+            
+            
+              {/* <div >
                 <IconButton disabled={enroll} onClick={handleEnrollment}>Enroll Course</IconButton>
-              </div>
+              </div> */}
             </div>
+
+
             <div className="right-content">
               <div className="title">{location.state.courseName} </div>
-              <div className="auther">{location.state.instructor}</div>
+              <div className="auther"> Course By : {location.state.instructor}</div>
               <div className="pricebook">
-                <div className="dis-price"> {location.state.lastDate}</div>
-                <div className="real-price">{location.state.duration}</div>
+               
+                <div className="dis-price">Last Day to Enroll : {location.state.lastDate}</div>
+               
               </div>
+              <div className="real-price"> Seats Left : {location.state.duration}</div>
               <hr />
               <div className="book-description">
-                <div className="detail">Course Detail </div>
+                <div className="detail">Course Details :  </div>
                 <p className="descrip">
                   {location.state.courseDescription}
 
@@ -77,7 +88,7 @@ export function CourseDetail() {
               </div>
             </div>
           </div>
-        </Rotate>
+          </Jump>
       </div>
 
     </div>

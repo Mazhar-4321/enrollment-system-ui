@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import ApproveCourseCertificateRequest from '../components/ApproveCourseCertificateRequest';
 import DashBoard from './DashBoard';
-import { getDashboardData } from '../services/AdminService';
 
 
 
@@ -20,9 +19,6 @@ export default function LabTabs() {
   const [visualData, setVisualData] = React.useState([])
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  React.useEffect(() => {
-    
-  }, [])
   const handleChange = (event, newValue) => {
     if (newValue == 5) {
       dispatch({
@@ -41,17 +37,19 @@ export default function LabTabs() {
             <Tab label="Dashboard" value="1" />
             <Tab label="Upload/Edit Course" value="2" />
             <Tab label="Remove Course" value="3" />
-            <Tab label="Approve Course Certificate Requests" value="4" />
+            {/* <Tab label="Approve Course Certificate Requests" value="4" /> */}
+            <Tab label="Upload Quiz" value="4" />
             <Tab label="Logout" value="5" />
-            <Tab label="Upload Quiz" value="6" />
+ 
           </TabList>
         </Box>
         <TabPanel value="1"><DashBoard  visualData={visualData}/></TabPanel>
         <TabPanel value="2"><UploadCourse2 /></TabPanel>
         <TabPanel value="3"><RemoveCourse /></TabPanel>
-        <TabPanel value="4"><ApproveCourseCertificateRequest /></TabPanel>
-        <TabPanel value="5">Logout</TabPanel>
-        <TabPanel value="6"><QuestionForm /></TabPanel>
+        {/* <TabPanel value="4"><ApproveCourseCertificateRequest /></TabPanel> */}
+        <TabPanel value="4"><QuestionForm /></TabPanel>
+       <TabPanel value="5">Logout</TabPanel>
+
       </TabContext>
     </Box>
   );

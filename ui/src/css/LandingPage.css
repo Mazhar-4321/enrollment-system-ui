@@ -93,7 +93,7 @@
     width: 37.5%;
     word-break: break-word;
   }
-  .forgetpassbutton:hover {
+  .forgotpassbutton:hover {
     transform-origin: right bottom;
     color: #1c266e;
     transform: scale(1.1);

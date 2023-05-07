@@ -1,6 +1,6 @@
 import axios from "axios";
 import store from '../store'
-const baseURL = 'http://localhost:3008/api/v1/'
+const baseURL = 'http://localhost:3005/api/v1/'
 
 const state = store.getState().CourseReducer
 

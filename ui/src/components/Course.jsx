@@ -7,9 +7,13 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Flip from 'react-reveal/Flip';
+import sampleimg from "../images/71OsIaHonQL._SL1500_.jpg"
+
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
+
 export const Course = (props) => {
     console.log("props", props);
    
@@ -71,9 +75,10 @@ export const Course = (props) => {
                     {'Course Already Enrolled'}
                 </Alert>
             </Snackbar>
-            <div onClick={handleChange} style={{ cursor: 'pointer' }} className="card">
+            <Flip left>
+            <div onClick={handleChange} style={{ cursor: 'pointer' ,  backgroundColor : "#F5F5F5" ,  boxShadow : "0px 0px 10px rgba(0, 0, 0, 0.3)"}} className="card">
                 <div className="card-image" >
-                    <img className="card-image-display" src={'https://www.shutterstock.com/image-vector/open-book-vector-clipart-silhouette-260nw-795305758.jpg'} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
+                    <img className="card-image-display" src={sampleimg} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
                     {!props.isStudent && <IconButton style={{ position: 'abslute', top: '-80px', right: '-50px', background: 'black', color: 'white' }}>
                         <CloseIcon />
                     </IconButton>
@@ -92,6 +97,7 @@ export const Course = (props) => {
                     <div style={{ marginTop: '5px', }}><span style={{ fontSize: '12px' }}>Seats Left:{props.seatsLeft} </span></div>
                 </div>
             </div>
+            </Flip>
 
         </>
 

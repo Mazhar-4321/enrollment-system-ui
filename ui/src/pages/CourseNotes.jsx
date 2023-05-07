@@ -19,6 +19,8 @@ import Grid from '@mui/material/Grid';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { cancelCourse, getAllCourses, getHighestMarks, getMyCourses, getQuiz } from "../services/StudentService";
+import { storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { pickersToolbarButtonClasses } from "@mui/x-date-pickers/internals";
 import { PDFViewer } from "../components/PDFViewer";
 import { useLocation } from "react-router-dom";
@@ -133,6 +135,26 @@ export const CourseNotes = () => {
         setSnackbarSeverity(severity)
     }
     useEffect(() => {
+        // const imageRef = 
+        // ref(storage, `images/syedmazharali742@gmail.com/Himanshu (15) (1).pdf`);
+        
+
+        // getDownloadURL(imageRef)
+        // .then((url) => {
+        //   console.log("This is the url",url)
+        // })
+        // .catch((error) => {
+        //   // Handle any errors
+        //   console.log("errrr",error)
+        // });
+
+        // // imageRef
+        // // .getDownloadURL()
+        // // .then((url) => {
+        // //   console.log("url",url)
+        // // })
+        // // .catch((e) => console.log('getting downloadURL of image error => ', e));
+      
         const dbCall = async () => {
             const quizResponse = await getQuiz(location.state.id);
             setQuiz(quizResponse)
@@ -206,7 +228,7 @@ export const CourseNotes = () => {
                                         myCoursesList.data.map((e, i) => {
                                             return (
                                                 <Grid item xs={3}>
-                                                    <PDFViewer name={"pdf" + (i + 1)} url={e} />
+                                                    <PDFViewer  name={"pdf" + (i + 1)} url={e} />
                                                 </Grid>
                                             )
                                         })

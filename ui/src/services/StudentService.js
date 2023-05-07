@@ -4,6 +4,22 @@ const baseURL = 'http://localhost:3008/api/v1/'
 
 const state = store.getState().CourseReducer
 
+export const getImageById =async(id) => {
+    
+    try {
+        let response = await axios.put(`${baseURL}/students/image/${id}`, {
+           
+        }, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`
+            }
+        })
+        return response.data.data
+    } catch (err) {
+        throw new Error('Connection Refused')
+    }
+}
+
 export const getAllCourses = async (token) => {
     try {
         let response = await axios.get(`${baseURL}/students/availableCourses/${state.userDetails.email}`, {

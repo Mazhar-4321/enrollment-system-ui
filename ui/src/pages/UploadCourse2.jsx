@@ -20,6 +20,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { checkIfFileExists, deleteFileById, getCourseById, getMyCourses, updateCourse, uploadCourse } from "../services/AdminService";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 
 const props = {
@@ -42,6 +44,7 @@ const props = {
 
 export function UploadCourse2() {
   const [files, setFiles] = useState([]);
+  const myState = useSelector(state => state.CourseReducer)
   const [currentCourseId, setCurrentCourseId] = useState('abcdef');
   const [course, setCourse] = useState('');
   const [courses, setCourses] = useState([]);
@@ -126,17 +129,18 @@ export function UploadCourse2() {
   const handleOpen = () => {
     setOpen(true);
   };
-  const [value, setValue] = React.useState(dayjs('2023-05-01'));
+  const [value, setValue] = React.useState();
   const uploadImage = async (files) => {
 
 
     for (const [key, file] of Object.entries(files)) {
-      const imageRef = ref(storage, `images/${file.name}`)
+      const imageRef = ref(storage, `images/${myState.userDetails.email}/${file.name}`)
       uploadBytes(imageRef, file).then((res) => getDownloadURL(res.ref)).then((err) => {
         if (files.length - 1 === imagesLink.length) {
           imagesLink.push({
             name: file.name,
-            path: err
+            path: err,
+            ref: `images/${myState.userDetails.email}/${file.name}`
           });
 
           const callDB = async () => {
@@ -171,7 +175,8 @@ export function UploadCourse2() {
         } else {
           imagesLink.push({
             name: file.name,
-            path: err
+            path: err,
+            ref: `images/${myState.userDetails.email}/${file.name}`
           });
         }
       })
@@ -182,6 +187,47 @@ export function UploadCourse2() {
 
   }
 
+  const uploadImageToAWS = async () => {
+    var formData= new FormData();
+    var date = courseObject.lastDayToEnroll;
+    var year = new Date(date).getFullYear()
+    var month = new Date(date).getMonth()
+    var day = new Date(date).getDate()
+    month = (month + "").length == 1 ? `0${month}` : month
+    day = (day + "").length == 1 ? `0${day}` : day
+    courseObject.lastDayToEnroll = year + "-" + month + "-" + day;
+    formData.append("obj",courseObject);
+    formData.append("courseName",courseObject.courseName)
+    formData.append("courseDescription",courseObject.courseDescription)
+    formData.append("duration",courseObject.duration)
+    formData.append("instructorName",courseObject.instructorName)
+    formData.append("lastDayToEnroll",courseObject.lastDayToEnroll);
+    formData.append("email",myState.userDetails.email);
+    //state.userDetails.email
+
+
+
+    console.log(files)
+    files.forEach((f,i)=>formData.append("file"+i,f))
+    //formData.append("sample",files)
+    
+    axios({
+      method: "post",
+      url: "http://localhost:3008/api/v1/admins/addCourse",
+      data: formData,
+      body:JSON.stringify(courseObject),
+      headers: { "Content-Type": "application/pdf" },
+    })
+      .then(function (response) {
+        //handle success
+        console.log(response);
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response);
+      });
+  // var response = await updateCourse(courseObject, imagesLink, currentCourseId)
+  }
   const onSnackbarClose = () => {
     setSnackbar(false)
   }
@@ -217,7 +263,8 @@ export function UploadCourse2() {
       return;
     }
 
-    uploadImage(files.filter(e => e.path == null))
+    //uploadImage(files.filter(e => e.path == null))
+    uploadImageToAWS()
   }
   const changeCourseName = (event) => {
     setCourseObject(prevObj => ({
@@ -318,63 +365,63 @@ export function UploadCourse2() {
 
 
 
+              <form >
+                <div className="tfRow1">
+                  <TextField
+                    id="outlined-basic"
+                    className="textFiled"
+                    label="CourseName"
+                    value={courseObject.courseName}
+                    onChange={changeCourseName}
+                    variant="outlined"
+                    sx={{ width: "15rem" }}
+                  />
+                  <TextField
+                    id="outlined-basic"
+                    onChange={changeInstructorName}
+                    value={courseObject.instructorName}
+                    className="textFiled"
+                    label="InstrctorName"
+                    variant="outlined"
+                    sx={{ width: "15rem" }}
+                  />
+                </div>
+                <div className="tfRow2">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DatePicker', 'DatePicker']}>
 
-              <div className="tfRow1">
-                <TextField
-                  id="outlined-basic"
-                  className="textFiled"
-                  label="CourseName"
-                  value={courseObject.courseName}
-                  onChange={changeCourseName}
-                  variant="outlined"
-                  sx={{ width: "15rem" }}
-                />
-                <TextField
-                  id="outlined-basic"
-                  onChange={changeInstructorName}
-                  value={courseObject.instructorName}
-                  className="textFiled"
-                  label="InstrctorName"
-                  variant="outlined"
-                  sx={{ width: "15rem" }}
-                />
-              </div>
-              <div className="tfRow2">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={['DatePicker', 'DatePicker']}>
-
-                    <DatePicker
-                      label="Last Date To Enroll"
-                      value={value}
-                      format="YYYY/MM/DD"
-                      onChange={(newValue) => changeLastDayToEnroll(newValue)}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-                <TextField
-                  id="outlined-basic"
-                  onChange={changeDuration}
-                  value={courseObject.duration}
-                  type="number"
-                  className="textFiled"
-                  label="Duration"
-                  variant="outlined"
-                  sx={{ width: "15rem" }}
-                />
-              </div>
-              <div className="tfRow3">
-                <TextField
-                  id="outlined-basic"
-                  onChange={changeCourseDescription}
-                  label="Course Description"
-                  value={courseObject.courseDescription}
-                  className="textFiled"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  sx={{ width: "15rem" }}
-                />
-                {/* <Upload {...props} accept=".pdf">
+                      <DatePicker
+                        label="Last Date To Enroll"
+                        value={value}
+                        format="YYYY/MM/DD"
+                        onChange={(newValue) => changeLastDayToEnroll(newValue)}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+                  <TextField
+                    id="outlined-basic"
+                    onChange={changeDuration}
+                    value={courseObject.duration}
+                    type="number"
+                    className="textFiled"
+                    label="Duration"
+                    variant="outlined"
+                    sx={{ width: "15rem" }}
+                  />
+                </div>
+                <div className="tfRow3">
+                  <TextField
+                    id="outlined-basic"
+                    onChange={changeCourseDescription}
+                    label="Course Description"
+                    value={courseObject.courseDescription}
+                    className="textFiled"
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    sx={{ width: "15rem" }}
+                  />
+                  {/* <Upload {...props} accept=".pdf">
               <Button
                 style={{ width: "15rem" }}
                 size={"large"}
@@ -384,29 +431,31 @@ export function UploadCourse2() {
                 Click to Upload
               </Button>
             </Upload> */}
-                <input style={{ display: 'none' }} type='file' id='img' multiple onChange={getFile}>
+                  <input style={{ display: 'none' }} type='file' id='img' multiple onChange={getFile}>
 
 
-                </input>
-                <label style={{ border: '1px solid rgb(0,0,0,0.5', padding: '10px 10px 10px 10px', cursor: 'pointer' }} for="img">Click me to upload image</label>
+                  </input>
+                  <label style={{ border: '1px solid rgb(0,0,0,0.5', padding: '10px 10px 10px 10px', cursor: 'pointer' }} for="img">Click me to upload image</label>
 
-              </div>
-              <div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
-                {
-                  files.map(v => <div style={{ border: '1px solid rgb(0,0,0,0.5)', marginRight: '10px', cursor: 'pointer', padding: '4px 4px 4px 4px' }} key={v.name} onClick={() => { if (v.path != null && v.name != null) deleteFileFromDB(v.path + "~" + v.name); setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
-                }
-              </div>
-              <div className="tfRow4">
-                <Buttons
-                  variant="contained"
-                  size="medium"
-                  className="upc"
-                  onClick={uploadCourseToDatabase}
-                  sx={{ width: "34rem" }}
-                >
-                  Upload Course
-                </Buttons>
-              </div>
+                </div>
+                <div style={{ display: 'flex', width: '100%', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                  {
+                    files.map(v => <div style={{ border: '1px solid rgb(0,0,0,0.5)', marginRight: '10px', cursor: 'pointer', padding: '4px 4px 4px 4px' }} key={v.name} onClick={() => { if (v.path != null && v.name != null) deleteFileFromDB(v.path + "~" + v.name); setFiles(files.filter(f => f.name !== v.name)) }}>{v.name}</div>)
+                  }
+                </div>
+                <div className="tfRow4">
+                  <Buttons
+                    variant="contained"
+                    size="medium"
+                    className="upc"
+                    onClick={uploadCourseToDatabase}
+                    sx={{ width: "34rem" }}
+                  >
+                    Upload Course
+                  </Buttons>
+
+                </div>
+              </form>
             </div>
           </div>
         </div>

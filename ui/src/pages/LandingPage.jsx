@@ -17,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useDispatch, useSelector } from "react-redux";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const passwordRegex =
@@ -110,10 +112,46 @@ export const LandingPage = () => {
         return
       }
       if (loginResponse) {
+        console.log(loginResponse.data.data)
         dispatch({
           type: 'updateToken',
           value: loginResponse.data.data
         })
+        const auth = getAuth();
+        var tokenArray = loginResponse.data.data.split(",")
+        var token = null;
+        console.log("miya ....", tokenArray)
+        if (tokenArray[0] === 'student') {
+          token = tokenArray[4]
+
+        } else
+          token = tokenArray[2]
+
+        // signInWithCustomToken(auth,token)
+        //   .then((userCredential) => {
+        //     // Signed in
+        //     const user = userCredential.user;
+        //     console.log("Kanana ",user)
+        //     // ...
+        //   })
+        //   .catch((error) => {
+        //     const errorCode = error.code;
+        //     const errorMessage = error.message;
+        //     console.log("errrrr",errorMessage)
+        //     // ...
+        //   });
+        signInWithEmailAndPassword(auth, signInObject.email, signInObject.password)
+          .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            console.log("user details from firebase", user)
+            // ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log("errrrr", errorMessage)
+          });
         if (loginResponse.data.data.split(",")[0] == 'admin') {
           navigate('/AdminPage')
         } else {
@@ -148,7 +186,6 @@ export const LandingPage = () => {
   };
 
   const handleOtp = async () => {
-    alert(userType)
     const data2 = {
       firstName: signUpObject.firstName,
       lastName: signUpObject.lastName,
@@ -160,6 +197,18 @@ export const LandingPage = () => {
     try {
       const response = await registerUser(data2);
       if (response) {
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, signUpObject.email, signUpObject.password)
+          .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            // ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+          });
         setSnackbar(true);
         setSnackbarMessage("Registration Success")
         setSnackbarSeverity('success')

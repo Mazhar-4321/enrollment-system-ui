@@ -39,6 +39,7 @@ export const uploadCourse = async (obj, imagesLink) => {
     }
 }
 
+
 export const updateCourse = async (obj, imagesLink, courseId) => {
     const state = store.getState().CourseReducer;
     obj.notes = imagesLink

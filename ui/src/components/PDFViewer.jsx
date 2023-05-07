@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import '../css/Course.css'
+import { getImageById } from "../services/StudentService";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Dialog from '@mui/material/Dialog';
@@ -18,11 +19,20 @@ export const PDFViewer = (props) => {
     const [pdfContent, setPDFContent] = useState(props.url)
     const navigate = useNavigate();
     useEffect(() => {
+        const dbCall = async () => {
+            var data = await getImageById(props.url)
+            setPDFContent(data)
+        }
+        dbCall()
     }, [])
 
     const handleChange = async (soda) => {
         setOpen(true)
-        setPDFContent(props.url)
+        var data = await getImageById(props.url)
+        console.log("datata", data)
+        setPDFContent(data)
+
+        // setPDFContent(props.url)
     }
 
     const handleClose = () => {
@@ -31,7 +41,7 @@ export const PDFViewer = (props) => {
     }
     return (
         <>
-        <Dialog
+            <Dialog
                 fullScreen
                 open={open}
                 onClose={handleClose}
@@ -39,7 +49,7 @@ export const PDFViewer = (props) => {
             >
                 <AppBar sx={{ position: 'relative' }}>
                     <Toolbar>
-                      
+
                         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}><IconButton
                             edge="end"
                             color="inherit"
@@ -51,29 +61,32 @@ export const PDFViewer = (props) => {
                         </div>
                     </Toolbar>
                 </AppBar>
-               
-                <object style={{ width: '100vw', height: '100vh' }} data={pdfContent} type="application/pdf" width="100%" height="100%">
+
+                <object style={{ width: '100vw', height: '100vh' }} data={pdfContent} content="attachment" type="application/pdf" width="100%" height="100%">
                     <p>Alternative text - include a link <a href="abc.pdf">to the PDF!</a></p>
                 </object>
+                {/* <img src={pdfContent} /> */}
+                {/* <iframe src={pdfContent}
+                    width="800" height="600"></iframe> */}
             </Dialog>
-            <div onClick={()=>handleChange("soda")} style={{ cursor: 'pointer' }} className="card">
-            <div className="card-image" >
-                <img className="card-image-display" src={'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/1200px-PDF_file_icon.svg.png'} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
-                {!props.isStudent && <IconButton style={{ position: 'absolute', top: '-80px', right: '-50px', background: 'black', color: 'white' }}>
-                    <CloseIcon />
-                </IconButton>
-                }
+            <div onClick={() => handleChange("soda")} style={{ cursor: 'pointer' }} className="card">
+                <div className="card-image" >
+                    <img className="card-image-display" src={'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/1200px-PDF_file_icon.svg.png'} onError={() => 'src=https://public-v2links.adobecc.com/d096df37-ca37-4026-553f-8cfa6bec09ec/component?params=component_id%3A634ba680-536e-4b6f-b4a3-41986b9b22f5&params=version%3A0&token=1679461552_da39a3ee_5b75718b73ea33c3022cbe352cbeb9bcb66597f0&api_key=CometServer1'} />
+                    {!props.isStudent && <IconButton style={{ position: 'absolute', top: '-80px', right: '-50px', background: 'black', color: 'white' }}>
+                        <CloseIcon />
+                    </IconButton>
+                    }
+                </div>
+
+                <div style={{ height: '37%', width: '100%', marginLeft: '10px', marginBottom: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', rowGap: '2' }}>
+                    <div style={{ color: '#0A0102', marginLeft: '0px', fontSize: '14px' }}><span> {props.name}</span></div>
+
+
+                </div>
+
+
             </div>
-
-            <div style={{ height: '37%', width: '100%', marginLeft: '10px', marginBottom: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', rowGap: '2' }}>
-                <div style={{ color: '#0A0102', marginLeft: '0px', fontSize: '14px' }}><span> {props.name}</span></div>
-
-
-            </div>
-            
-
-        </div>
         </>
-       
+
     )
 }

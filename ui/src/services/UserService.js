@@ -32,7 +32,7 @@ export const reset=async(obj)=>{
 export const login=async(obj)=>{
     try {
         var response = await axios.post(`${baseURL}/users/login`, obj)
-        
+        console.log(response)
         return response
     } catch (err) {
         throw new Error('Could Not Create User')
